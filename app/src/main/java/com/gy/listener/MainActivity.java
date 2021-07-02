@@ -10,7 +10,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 
 import com.gy.listener.db.DatabaseHelper;
 import com.gy.listener.db.IItemsListDAO;
-import com.gy.listener.utilities.Helpers;
 
 public class MainActivity extends AppCompatActivity {
 
