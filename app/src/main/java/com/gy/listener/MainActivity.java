@@ -9,7 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import com.gy.listener.db.DatabaseHelper;
-import com.gy.listener.db.IItemsListDAO;
+import com.gy.listener.db.IRecordsListDAO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         _appBarConfig =  new AppBarConfiguration.Builder()
                         .build();
-        IItemsListDAO dao = DatabaseHelper.db.itemsListDAO();
+        IRecordsListDAO dao = DatabaseHelper.db.itemsListDAO();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
