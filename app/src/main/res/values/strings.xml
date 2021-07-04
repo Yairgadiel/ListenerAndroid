@@ -7,18 +7,20 @@
     <string name="list_add_fragment_label">Add List</string>
 
 
+    <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
     <string name="list_id_hint">Unique ID</string>
     <string name="list_name_hint">List Name</string>
     <string name="list_details_hint">Optional Details</string>
-    <string name="create">create</string>
     <string name="list_type_hint">List Type</string>
 
     <string name="empty_string_error">Input can\'t be empty!</string>
     <string name="none_selected_error">Must choose an option!</string>
     <string name="invalid_toast">Input is invalid!</string>
+    <string name="revert">revert</string>
 
 </resources>

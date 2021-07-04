@@ -48,7 +48,6 @@ public class MyListsFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         previews.setLayoutManager(layoutManager);
 
-
         _adapter = new CardAdapter(_viewModel.getData());
         previews.setAdapter(_adapter);
     }

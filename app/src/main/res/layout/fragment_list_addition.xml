@@ -97,11 +97,9 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-
     <Button
         android:id="@+id/create_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/btn_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/create"
@@ -113,7 +111,7 @@
 
     <Button
         android:id="@+id/cancel_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/btn_width"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="@string/cancel"
