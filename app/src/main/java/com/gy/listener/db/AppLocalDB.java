@@ -7,5 +7,5 @@ import com.gy.listener.myLists.RecordsList;
 
 @Database(entities = {RecordsList.class}, version = 1)
 public abstract class AppLocalDB extends RoomDatabase {
-    public abstract IItemsListDAO itemsListDAO();
+    public abstract IRecordsListDAO itemsListDAO();
 }

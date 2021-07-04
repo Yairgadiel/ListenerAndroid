@@ -11,7 +11,7 @@ import com.gy.listener.myLists.RecordsList;
 import java.util.List;
 
 @Dao
-public interface IItemsListDAO {
+public interface IRecordsListDAO {
     @Insert
     void insertAll(RecordsList... recordsLists);
 
