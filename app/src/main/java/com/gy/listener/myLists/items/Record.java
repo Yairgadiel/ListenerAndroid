@@ -1,8 +1,10 @@
-package com.gy.listener.myLists;
+package com.gy.listener.myLists.items;
 
 import androidx.annotation.Nullable;
 
-public class Record {
+import java.io.Serializable;
+
+public class Record implements Serializable {
     private String _text;
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.myLists.items;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,11 +11,12 @@ import androidx.room.TypeConverters;
 import com.gy.listener.db.DataConverter;
 import com.gy.listener.db.DbContract;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = DbContract.RECORDS_LIST_TABLE)
-public class RecordsList {
+public class RecordsList implements Serializable {
 
     // region Members
 
@@ -105,4 +106,5 @@ public class RecordsList {
     }
 
     // endregion
+
 }

@@ -17,6 +17,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
+import com.gy.listener.myLists.items.ListType;
+import com.gy.listener.myLists.items.RecordsList;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
@@ -87,14 +89,17 @@ public class ListAdditionFragment extends Fragment {
         _id = rootView.findViewById(R.id.list_id);
         _idLayout = rootView.findViewById(R.id.list_id_layout);
         _idLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _idLayout.setEndIconActivated(true);
 
         _name = rootView.findViewById(R.id.list_name);
         _nameLayout = rootView.findViewById(R.id.list_name_layout);
         _nameLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _nameLayout.setEndIconActivated(true);
 
         _details = rootView.findViewById(R.id.list_details);
         _detailsLayout = rootView.findViewById(R.id.list_details_layout);
         _detailsLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _detailsLayout.setEndIconActivated(true);
 
         _listType = rootView.findViewById(R.id.list_type);
         _listTypeLayout = rootView.findViewById(R.id.list_type_layout);

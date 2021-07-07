@@ -27,4 +27,26 @@
         android:label="@string/list_add_fragment_label"
         tools:layout="@layout/fragment_list_addition" >
     </fragment>
+
+    <fragment
+        android:id="@+id/recordsListFragment"
+        android:name="com.gy.listener.myLists.RecordsListFragment"
+        android:label="@string/records_list_fragment_label"
+        tools:layout="@layout/fragment_records_list" >
+        <argument
+            android:name="recordsList"
+            app:argType="com.gy.listener.myLists.models.RecordsList"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_recordsListFragment"
+        app:destination="@id/recordsListFragment"
+        app:enterAnim="@anim/fragment_open_enter"
+        app:exitAnim="@anim/fragment_open_exit"
+        app:popEnterAnim="@anim/fragment_fade_enter"
+        app:popExitAnim="@anim/fragment_fade_exit">
+
+    </action>
 </navigation>

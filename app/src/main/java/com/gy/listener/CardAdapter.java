@@ -8,9 +8,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gy.listener.myLists.RecordsList;
+import com.gy.listener.myLists.RecordsListFragmentDirections;
+import com.gy.listener.myLists.items.RecordsList;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     private final LiveData<List<RecordsList>> _data;
 
-    public CardAdapter( LiveData<List<RecordsList>> lists) {
+    public CardAdapter(LiveData<List<RecordsList>> lists) {
         _data = lists;
     }
 
@@ -27,7 +29,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_my_lists_preview, parent, false);
+                .inflate(R.layout.list_preview_item, parent, false);
 
         return new CardViewHolder(view);
     }
@@ -35,6 +37,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         RecordsList currList = _data.getValue().get(position);
+
+        holder.setOnClickListener((v -> {
+            NavGraphDirections.ActionGlobalRecordsListFragment action =
+                    RecordsListFragmentDirections.actionGlobalRecordsListFragment();
+            action.setRecordsList(currList);
+            Navigation.findNavController(v).navigate(action);
+        }));
 
         holder.setName(currList.getName());
         holder.setDetails(currList.getDetails());
@@ -51,6 +60,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
      * (custom ViewHolder).
      */
     public static class CardViewHolder extends RecyclerView.ViewHolder {
+        private final View  _container;
         private final TextView _listName;
         private final TextView _listDetails;
         private final ImageView _listImg;
@@ -58,6 +68,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         public CardViewHolder(View view) {
             super(view);
 
+            _container = view;
             _listName = view.findViewById(R.id.list_prev_name);
             _listDetails = view.findViewById(R.id.list_prev_details);
             _listImg = view.findViewById(R.id.list_prev_img);
@@ -69,6 +80,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
         public void setDetails(String details) {
             _listDetails.setText(details);
+        }
+
+        public void setOnClickListener(View.OnClickListener listener) {
+            _container.setOnClickListener(listener);
         }
 
         public void setImage(int imgId) {

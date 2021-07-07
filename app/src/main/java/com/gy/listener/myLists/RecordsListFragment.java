@@ -4,25 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
-import com.gy.listener.utilities.InputUtils;
-import com.gy.listener.utilities.TextUtils;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import com.gy.listener.myLists.items.ListType;
+import com.gy.listener.myLists.items.RecordsList;
 
 public class RecordsListFragment extends Fragment {
 
@@ -36,6 +28,8 @@ public class RecordsListFragment extends Fragment {
 
     private ListType _selectedType = null;
 
+    private RecordListAdapter _adapter;
+
     // endregion
 
     @Override
@@ -43,7 +37,7 @@ public class RecordsListFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_addition, container, false);
+        return inflater.inflate(R.layout.fragment_records_list, container, false);
     }
 
     @Override
@@ -54,18 +48,34 @@ public class RecordsListFragment extends Fragment {
 
         initViews(view);
 
-        view.findViewById(R.id.cancel_btn).setOnClickListener(v ->
-                NavHostFragment.findNavController(RecordsListFragment.this)
-                        .popBackStack());
+//        view.findViewById(R.id.cancel_btn).setOnClickListener(v ->
+//                NavHostFragment.findNavController(RecordsListFragment.this)
+//                        .popBackStack());
 
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        _records.setLayoutManager(layoutManager);
+
+        // Extract the current records list
+        RecordsList recordsList = null;
+
+        if (getArguments() != null) {
+            recordsList = RecordsListFragmentArgs.fromBundle(getArguments()).getRecordsList();
+        }
+
+        if (recordsList == null) {
+            System.out.println("No records list was passed!");
+        }
+        else {
+            _adapter = new RecordListAdapter(recordsList);
+            _records.setAdapter(_adapter);
+        }
     }
 
     private void initViews(@NonNull View rootView) {
         _details = rootView.findViewById(R.id.list_details);
-        _records =  rootView.findViewById(R.id.records);
-        _saveBtn =  rootView.findViewById(R.id.save_btn);
-        _revertBtn =  rootView.findViewById(R.id.revert_btn);
-
+        _records = rootView.findViewById(R.id.records);
+        _saveBtn = rootView.findViewById(R.id.save_btn);
+        _revertBtn = rootView.findViewById(R.id.revert_btn);
     }
 
 }

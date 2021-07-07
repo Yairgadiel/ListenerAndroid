@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.myLists.items;
 
 import androidx.annotation.Nullable;
 
@@ -15,11 +15,11 @@ public class CheckedRecord extends Record {
         _isChecked = isChecked;
     }
 
-    public boolean getChecked() {
+    public boolean getIsChecked() {
         return _isChecked;
     }
 
-    public void setChecked(boolean checked) {
+    public void setIsChecked(boolean checked) {
         _isChecked = checked;
     }
 }
