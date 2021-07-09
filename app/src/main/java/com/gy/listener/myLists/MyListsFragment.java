@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,8 +39,8 @@ public class MyListsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.add_fab).setOnClickListener(v ->
-                NavHostFragment.findNavController(MyListsFragment.this).navigate(R.id.action_myListsFragment_to_listAdditionFragment));
+        view.findViewById(R.id.add_fab).setOnClickListener(
+                Navigation.createNavigateOnClickListener(R.id.action_myListsFragment_to_listAdditionFragment));
 
         // Set lists previews
 
