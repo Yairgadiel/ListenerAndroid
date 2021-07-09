@@ -14,7 +14,10 @@
         <action
             android:id="@+id/action_myListsFragment_to_listAdditionFragment"
             app:destination="@id/listAdditionFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpToInclusive="true"/>
     </fragment>
 
