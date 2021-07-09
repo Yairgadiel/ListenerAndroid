@@ -6,7 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.gy.listener.myLists.items.RecordsList;
+import com.gy.listener.myLists.models.RecordsList;
 
 import java.util.List;
 

@@ -12,7 +12,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.myLists.RecordsListFragmentDirections;
-import com.gy.listener.myLists.items.RecordsList;
+import com.gy.listener.myLists.models.RecordsList;
 
 import java.util.List;
 

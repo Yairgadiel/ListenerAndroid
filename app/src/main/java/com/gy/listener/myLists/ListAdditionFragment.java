@@ -1,5 +1,6 @@
 package com.gy.listener.myLists;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -17,12 +19,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
-import com.gy.listener.myLists.items.ListType;
-import com.gy.listener.myLists.items.RecordsList;
+import com.gy.listener.myLists.models.ListType;
+import com.gy.listener.myLists.models.RecordsList;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListAdditionFragment extends Fragment {
@@ -109,9 +113,22 @@ public class ListAdditionFragment extends Fragment {
     }
 
     private void setListTypeAdapter() {
+        List<String> listTypes;
+
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
+            listTypes = new ArrayList<>(ListType.values().length);
+
+            for (int i = 0; i < ListType.values().length; i++) {
+                listTypes.add(TextUtils.toPascalCase(ListType.values()[i].name()));
+            }
+        }
+        else {
+            listTypes = Arrays.stream(ListType.values()).map(e -> TextUtils.toPascalCase(e.name())).collect(Collectors.toList());
+        }
+
         ArrayAdapter typesAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.dropdown_menu_popup_item,
-                Arrays.stream(ListType.values()).map(e->TextUtils.toPascalCase(e.name())).collect(Collectors.toList()));
+                listTypes);
         _listType.setAdapter(typesAdapter);
 
         _listType.setOnItemClickListener((parent, view, position, id) -> {

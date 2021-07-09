@@ -3,7 +3,7 @@ package com.gy.listener.myLists;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.gy.listener.myLists.items.RecordsList;
+import com.gy.listener.myLists.models.RecordsList;
 
 import java.util.List;
 

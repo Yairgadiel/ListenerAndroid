@@ -4,7 +4,7 @@ import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.gy.listener.myLists.items.Record;
+import com.gy.listener.myLists.models.Record;
 
 import java.lang.reflect.Type;
 import java.util.List;

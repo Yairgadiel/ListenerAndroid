@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/record_is_checked"
+        android:layout_marginStart="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -19,8 +20,8 @@
         app:layout_constraintStart_toEndOf="@id/record_is_checked"
         app:layout_constraintEnd_toStartOf="@id/record_attachment"
         android:text="Do Homework"
-        android:inputType="none"
-        android:background="@android:color/transparent"
+        android:inputType="text"
+        android:layout_marginEnd="4dp"
         app:layout_constraintBaseline_toBaselineOf="@id/record_is_checked"/>
 
     <ImageButton

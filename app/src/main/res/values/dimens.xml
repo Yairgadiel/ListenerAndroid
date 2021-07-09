@@ -4,4 +4,5 @@
 
     <dimen name="details_text_size">16sp</dimen>
     <dimen name="btn_width">135dp</dimen>
+    <dimen name="add_icon_size">50dp</dimen>
 </resources>

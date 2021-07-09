@@ -5,16 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
-import com.gy.listener.myLists.items.ListType;
-import com.gy.listener.myLists.items.RecordsList;
+import com.gy.listener.myLists.models.CheckedRecord;
+import com.gy.listener.myLists.models.ListType;
+import com.gy.listener.myLists.models.RecordsList;
 
 public class RecordsListFragment extends Fragment {
 
@@ -22,6 +26,8 @@ public class RecordsListFragment extends Fragment {
 
     private TextView _details;
     private RecyclerView _records;
+    private ImageButton _addRecordBtn;
+    private MutableLiveData<Boolean> _isAdding;
     private Button _saveBtn;
     private Button _revertBtn;
 
@@ -44,8 +50,6 @@ public class RecordsListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // TODO set action bar title to be list's name
-
         initViews(view);
 
 //        view.findViewById(R.id.cancel_btn).setOnClickListener(v ->
@@ -56,26 +60,41 @@ public class RecordsListFragment extends Fragment {
         _records.setLayoutManager(layoutManager);
 
         // Extract the current records list
-        RecordsList recordsList = null;
+        final RecordsList recordsList;
 
         if (getArguments() != null) {
             recordsList = RecordsListFragmentArgs.fromBundle(getArguments()).getRecordsList();
         }
+        else {
+            recordsList = null;
+        }
 
         if (recordsList == null) {
             System.out.println("No records list was passed!");
+            NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
         }
         else {
-            _adapter = new RecordListAdapter(recordsList);
+            // TODO set action bar title to be list's name
+
+            _isAdding = new MutableLiveData<>(false);
+
+            // Setting the adapter
+            _adapter = new RecordListAdapter(recordsList, _isAdding);
             _records.setAdapter(_adapter);
+
+            _details.setText(recordsList.getDetails() == null ? "" : (recordsList.getDetails()));
+            _addRecordBtn.setOnClickListener(v -> {
+                recordsList.getRecords().add(new CheckedRecord("", false));
+                _isAdding.postValue(true);
+            });
         }
     }
 
     private void initViews(@NonNull View rootView) {
         _details = rootView.findViewById(R.id.list_details);
         _records = rootView.findViewById(R.id.records);
+        _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
         _saveBtn = rootView.findViewById(R.id.save_btn);
         _revertBtn = rootView.findViewById(R.id.revert_btn);
     }
-
 }
