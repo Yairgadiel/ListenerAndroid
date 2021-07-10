@@ -3,6 +3,7 @@ package com.gy.listener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         _navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         setSupportActionBar(toolbar);
 //        toolbar.inflateMenu(R.menu.menu_main);
 
@@ -48,11 +50,19 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                _navController.navigateUp();
-
-                break;
+                getOnBackPressedDispatcher().onBackPressed();
+                return true;
+//                _navController.navigateUp();
+//
+//                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 }

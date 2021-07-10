@@ -2,13 +2,19 @@ package com.gy.listener.myLists;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.fragment.NavHostFragment;
@@ -24,13 +30,12 @@ public class RecordsListFragment extends Fragment {
 
     // region UI Members
 
+    private Toolbar _toolbar;
     private TextView _details;
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
     private MutableLiveData<Boolean> _isAdding;
-    private Button _saveBtn;
-    private Button _revertBtn;
-
+    private NavigateBackListener _navigateBackListener;
 
     private ListType _selectedType = null;
 
@@ -42,6 +47,15 @@ public class RecordsListFragment extends Fragment {
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
+        _navigateBackListener = new NavigateBackListener();
+
+        _toolbar = requireActivity().findViewById(R.id.toolbar);
+        _toolbar.setNavigationOnClickListener(_navigateBackListener);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), _navigateBackListener);
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_records_list, container, false);
     }
@@ -51,10 +65,6 @@ public class RecordsListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initViews(view);
-
-//        view.findViewById(R.id.cancel_btn).setOnClickListener(v ->
-//                NavHostFragment.findNavController(RecordsListFragment.this)
-//                        .popBackStack());
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         _records.setLayoutManager(layoutManager);
@@ -75,6 +85,7 @@ public class RecordsListFragment extends Fragment {
         }
         else {
             // TODO set action bar title to be list's name
+            _toolbar.setTitle(recordsList.getName());
 
             _isAdding = new MutableLiveData<>(false);
 
@@ -90,11 +101,71 @@ public class RecordsListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_save, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.action_save) {
+            // TODO save to list
+            saveRecords();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // region Private Methods
+
     private void initViews(@NonNull View rootView) {
         _details = rootView.findViewById(R.id.list_details);
         _records = rootView.findViewById(R.id.records);
         _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
-        _saveBtn = rootView.findViewById(R.id.save_btn);
-        _revertBtn = rootView.findViewById(R.id.revert_btn);
     }
+
+    private void promptSave() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+
+        builder.setMessage(R.string.save_changes_prompt);
+        builder.setPositiveButton(R.string.save, (dialog, which) -> saveRecords());
+        builder.setNegativeButton(R.string.discard, (dialog, which) ->discardChanges());
+
+        builder.create().show();
+    }
+
+    private void saveRecords() {
+        NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+    }
+
+    private void discardChanges() {
+        NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+    }
+
+    // endregion
+
+    // region Listeners
+
+    private class NavigateBackListener extends OnBackPressedCallback implements View.OnClickListener {
+        public NavigateBackListener() {
+            super(true);
+        }
+
+        @Override
+        public void onClick(View v) {
+            promptSave();
+        }
+
+        @Override
+        public void handleOnBackPressed() {
+            promptSave();
+        }
+    }
+
+    // endregion
+
 }
