@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.ui.recordsList;
 
 import android.content.res.ColorStateList;
 import android.os.Build;
@@ -18,14 +18,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
-import com.gy.listener.myLists.models.CheckedRecord;
-import com.gy.listener.myLists.models.ListType;
-import com.gy.listener.myLists.models.Record;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.model.items.CheckedRecord;
+import com.gy.listener.model.items.ListType;
+import com.gy.listener.model.items.Record;
+import com.gy.listener.model.items.RecordsList;
 
 import java.util.List;
 
-public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.RecordViewHolder> {
+public class RecordsListAdapter extends RecyclerView.Adapter<RecordsListAdapter.RecordViewHolder> {
 
     private static final int VIEW_TYPE_EDITABLE = 0;
     private static final int VIEW_TYPE_UNEDITABLE = 1;
@@ -37,7 +37,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
 
     private boolean _isEditing;
 
-    public RecordListAdapter(@NonNull RecordsList recordsList, @NonNull MutableLiveData<Boolean> isAdding, @NonNull MutableLiveData<Boolean> isChanged) {
+    public RecordsListAdapter(@NonNull RecordsList recordsList, @NonNull MutableLiveData<Boolean> isAdding, @NonNull MutableLiveData<Boolean> isChanged) {
         _data = recordsList.getRecords();
         _listType = recordsList.getListType();
         _isEditing = false;

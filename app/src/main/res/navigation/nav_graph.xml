@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/MyListsFragment"
-        android:name="com.gy.listener.myLists.MyListsFragment"
+        android:name="com.gy.listener.ui.listsPreviews.ListsPreviewFragment"
         android:label="@string/my_lists_fragment_label"
-        tools:layout="@layout/fragment_my_lists">
+        tools:layout="@layout/fragment_lists_previews">
 
         <action
             android:id="@+id/action_myListsFragment_to_listAdditionFragment"
@@ -23,14 +23,14 @@
 
     <fragment
         android:id="@+id/listAdditionFragment"
-        android:name="com.gy.listener.myLists.ListAdditionFragment"
+        android:name="com.gy.listener.ui.listAddition.ListAdditionFragment"
         android:label="@string/list_add_fragment_label"
         tools:layout="@layout/fragment_list_addition" >
     </fragment>
 
     <fragment
         android:id="@+id/recordsListFragment"
-        android:name="com.gy.listener.myLists.RecordsListFragment"
+        android:name="com.gy.listener.ui.recordsList.RecordsListFragment"
         android:label="@string/records_list_fragment_label"
         tools:layout="@layout/fragment_records_list" >
         <argument

@@ -1,32 +1,32 @@
-package com.gy.listener.myLists;
+package com.gy.listener.model;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import com.gy.listener.db.DatabaseHelper;
-import com.gy.listener.myLists.models.Record;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.model.items.Record;
+import com.gy.listener.model.items.RecordsList;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MyListsRepository {
+public class RecordsListsRepository {
     private LiveData<List<RecordsList>> _lists;
     private ExecutorService _executorService = Executors.newSingleThreadExecutor();
 
 
     // region Singleton
 
-    private static MyListsRepository _instance;
+    private static RecordsListsRepository _instance;
 
-    private MyListsRepository() {
+    private RecordsListsRepository() {
     }
 
-    public static MyListsRepository getInstance() {
+    public static RecordsListsRepository getInstance() {
         if (_instance == null) {
-            _instance = new MyListsRepository();
+            _instance = new RecordsListsRepository();
         }
 
         return _instance;
@@ -38,13 +38,13 @@ public class MyListsRepository {
 
     public void addRecordsList(RecordsList recordsList) {
         _executorService.execute(() -> {
-            DatabaseHelper.db.itemsListDAO().insertAll(recordsList);
+            DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
         });
     }
 
     public void updateRecordsList(RecordsList recordsList) {
         _executorService.execute(() -> {
-            DatabaseHelper.db.itemsListDAO().update(recordsList);
+            DatabaseHelper.db.recordsListDAO().update(recordsList);
         });
     }
 
@@ -81,7 +81,7 @@ public class MyListsRepository {
     public LiveData<List<RecordsList>> getAllLists() {
         if (_lists == null) {
             // Loading...
-            _lists = DatabaseHelper.db.itemsListDAO().getAll();
+            _lists = DatabaseHelper.db.recordsListDAO().getAll();
             // ObserveForever -> loaded
         }
 

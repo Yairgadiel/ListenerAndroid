@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.ui.recordsList;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,8 +23,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
-import com.gy.listener.myLists.models.CheckedRecord;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.model.items.CheckedRecord;
+import com.gy.listener.model.items.RecordsList;
 
 public class RecordsListFragment extends Fragment {
 
@@ -35,14 +36,14 @@ public class RecordsListFragment extends Fragment {
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
 
-    private MyListsViewModel _viewModel;
+    private RecordsListsViewModel _viewModel;
     private RecordsList _currRecordsList;
     private MutableLiveData<Boolean> _isAdding;
     private MutableLiveData<Boolean> _isChanged;
 
     private NavigateBackListener _navigateBackListener;
 
-    private RecordListAdapter _adapter;
+    private RecordsListAdapter _adapter;
 
     // endregion
 
@@ -52,7 +53,7 @@ public class RecordsListFragment extends Fragment {
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
+        _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
         _navigateBackListener = new NavigateBackListener();
 
         _toolbar = requireActivity().findViewById(R.id.toolbar);
@@ -97,7 +98,7 @@ public class RecordsListFragment extends Fragment {
                 _isChanged = new MutableLiveData<>(false);
 
                 // Setting the adapter
-                _adapter = new RecordListAdapter(_currRecordsList, _isAdding, _isChanged);
+                _adapter = new RecordsListAdapter(_currRecordsList, _isAdding, _isChanged);
                 _records.setAdapter(_adapter);
 
                 _details.setText(_currRecordsList.getDetails() == null ? "" : (_currRecordsList.getDetails()));

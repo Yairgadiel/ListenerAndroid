@@ -1,15 +1,12 @@
 package com.gy.listener;
 
 import com.gy.listener.db.DataConverter;
-import com.gy.listener.myLists.models.CheckedRecord;
-import com.gy.listener.myLists.models.ListType;
-import com.gy.listener.myLists.models.Record;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.model.items.CheckedRecord;
+import com.gy.listener.model.items.Record;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
