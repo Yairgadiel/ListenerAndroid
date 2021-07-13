@@ -7,9 +7,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -17,13 +17,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
 import com.gy.listener.myLists.models.CheckedRecord;
-import com.gy.listener.myLists.models.ListType;
 import com.gy.listener.myLists.models.RecordsList;
 
 public class RecordsListFragment extends Fragment {
@@ -34,10 +34,13 @@ public class RecordsListFragment extends Fragment {
     private TextView _details;
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
-    private MutableLiveData<Boolean> _isAdding;
-    private NavigateBackListener _navigateBackListener;
 
-    private ListType _selectedType = null;
+    private MyListsViewModel _viewModel;
+    private RecordsList _currRecordsList;
+    private MutableLiveData<Boolean> _isAdding;
+    private MutableLiveData<Boolean> _isChanged;
+
+    private NavigateBackListener _navigateBackListener;
 
     private RecordListAdapter _adapter;
 
@@ -49,6 +52,7 @@ public class RecordsListFragment extends Fragment {
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
+        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
         _navigateBackListener = new NavigateBackListener();
 
         _toolbar = requireActivity().findViewById(R.id.toolbar);
@@ -68,36 +72,44 @@ public class RecordsListFragment extends Fragment {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         _records.setLayoutManager(layoutManager);
+        String recordsListId = null;
 
         // Extract the current records list
-        final RecordsList recordsList;
-
         if (getArguments() != null) {
-            recordsList = RecordsListFragmentArgs.fromBundle(getArguments()).getRecordsList();
-        }
-        else {
-            recordsList = null;
+            recordsListId = RecordsListFragmentArgs.fromBundle(getArguments()).getRecordsListId();
         }
 
-        if (recordsList == null) {
+        if (recordsListId == null) {
             System.out.println("No records list was passed!");
             NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
         }
         else {
-            // TODO set action bar title to be list's name
-            _toolbar.setTitle(recordsList.getName());
+            _currRecordsList = _viewModel.getRecordsListById(recordsListId);
 
-            _isAdding = new MutableLiveData<>(false);
+            if (_currRecordsList == null) {
+                System.out.println("Illegal records list ID was passed!");
+                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+            }
+            else {
+                _toolbar.setTitle(_currRecordsList.getName());
 
-            // Setting the adapter
-            _adapter = new RecordListAdapter(recordsList, _isAdding);
-            _records.setAdapter(_adapter);
+                _isAdding = new MutableLiveData<>(false);
+                _isChanged = new MutableLiveData<>(false);
 
-            _details.setText(recordsList.getDetails() == null ? "" : (recordsList.getDetails()));
-            _addRecordBtn.setOnClickListener(v -> {
-                recordsList.getRecords().add(new CheckedRecord("", false));
-                _isAdding.postValue(true);
-            });
+                // Setting the adapter
+                _adapter = new RecordListAdapter(_currRecordsList, _isAdding, _isChanged);
+                _records.setAdapter(_adapter);
+
+                _details.setText(_currRecordsList.getDetails() == null ? "" : (_currRecordsList.getDetails()));
+                _addRecordBtn.setOnClickListener(v -> {
+                    // Only adding a record if the previous one isn't empty
+                    if (_currRecordsList.getRecords().isEmpty() || !_currRecordsList.getRecords().get(_adapter.getItemCount() - 1).getText().isEmpty()) {
+                        _currRecordsList.getRecords().add(new CheckedRecord("", false));
+                        _isAdding.postValue(true);
+                        _isChanged.setValue(true);
+                    }
+                });
+            }
         }
     }
 
@@ -111,10 +123,15 @@ public class RecordsListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         if (item.getItemId() == R.id.action_save) {
-            // TODO save to list
             saveRecords();
+
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_revert) {
+            discardChanges();
+
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,22 +145,63 @@ public class RecordsListFragment extends Fragment {
         _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
     }
 
-    private void promptSave() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+    private void promptSaveIfChanged() {
+        if (_isChanged.getValue()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
 
-        builder.setMessage(R.string.save_changes_prompt);
-        builder.setPositiveButton(R.string.save, (dialog, which) -> saveRecords());
-        builder.setNegativeButton(R.string.discard, (dialog, which) ->discardChanges());
+            builder.setMessage(R.string.save_changes_prompt);
+            builder.setPositiveButton(R.string.save, (dialog, which) -> {
+                saveRecords();
+                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+            });
 
-        builder.create().show();
+            builder.setNegativeButton(R.string.discard, (dialog, which) -> {
+                discardChanges();
+                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+            });
+
+            builder.create().show();
+        }
+        else {
+            NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+        }
     }
 
     private void saveRecords() {
-        NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+        if (_isChanged.getValue()) {
+            // Remove last record if empty
+            if (!_currRecordsList.getRecords().isEmpty() && _currRecordsList.getRecords().get(_adapter.getItemCount() - 1).getText().isEmpty()) {
+                _currRecordsList.getRecords().remove(_adapter.getItemCount() - 1);
+            }
+
+            _viewModel.updateRecordsList(_currRecordsList);
+
+            // No longer in adding mode
+            _isAdding.postValue(false);
+            _isChanged.setValue(false);
+
+            Toast.makeText(getContext(), R.string.successfully_saved, Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /**
+     * Reverting changes made since last save
+     */
     private void discardChanges() {
-        NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+        if (_isChanged.getValue()) {
+            // No longer in adding mode
+            _isAdding.postValue(false);
+
+            // Get the records list once again
+            _currRecordsList.getRecords().clear();
+            _currRecordsList.getRecords().addAll(_viewModel.getRecordsListById(_currRecordsList.getId()).getRecords());
+
+            _adapter.notifyDataSetChanged();
+
+            _isChanged.setValue(false);
+
+            Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // endregion
@@ -157,12 +215,12 @@ public class RecordsListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            promptSave();
+            promptSaveIfChanged();
         }
 
         @Override
         public void handleOnBackPressed() {
-            promptSave();
+            promptSaveIfChanged();
         }
     }
 

@@ -1,6 +1,5 @@
 package com.gy.listener.myLists;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,13 +10,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.gy.listener.NavGraphDirections;
 import com.gy.listener.R;
 import com.gy.listener.myLists.models.ListType;
 import com.gy.listener.myLists.models.RecordsList;
@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListAdditionFragment extends Fragment {
+
+    private MyListsViewModel _viewModel;
 
     // region UI Members
 
@@ -53,6 +55,8 @@ public class ListAdditionFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_addition, container, false);
@@ -78,14 +82,19 @@ public class ListAdditionFragment extends Fragment {
         view.findViewById(R.id.create_btn).setOnClickListener(v -> {
 
             if (validateInput()) {
-                MyListsRepository.getInstance().addItemsList(new RecordsList(
+                _viewModel.addRecordsList(new RecordsList(
                         _id.getText().toString(),
                         _name.getText().toString(),
                         _details.getText().toString(),
                         ListType.GROCERIES
                 ));
 
-                Navigation.findNavController(v).popBackStack();
+                // TODO currently not working well. We need to wait until the item stops being added
+                // Navigate to the added list's fragment
+                NavGraphDirections.ActionGlobalRecordsListFragment action =
+                        RecordsListFragmentDirections.actionGlobalRecordsListFragment();
+                action.setRecordsListId(_id.getText().toString());
+                Navigation.findNavController(v).navigate(action);
             }
         });
     }
@@ -127,7 +136,7 @@ public class ListAdditionFragment extends Fragment {
             listTypes = Arrays.stream(ListType.values()).map(e -> TextUtils.toPascalCase(e.name())).collect(Collectors.toList());
         }
 
-        ArrayAdapter typesAdapter = new ArrayAdapter<>(getContext(),
+        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.dropdown_menu_popup_item,
                 listTypes);
         _listType.setAdapter(typesAdapter);

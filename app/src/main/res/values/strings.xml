@@ -2,6 +2,7 @@
     <string name="app_name">Listener</string>
     <string name="action_settings">Settings</string>
     <string name="action_save">Save</string>
+    <string name="action_revert">Revert</string>
 
     <!-- Strings used for fragments for navigation -->
 
@@ -28,5 +29,7 @@
 
 
     <string name="save_changes_prompt">Would you like to save your changes?</string>
+    <string name="successfully_saved">Changes were saved successfully!</string>
+    <string name="successfully_reverted">Changes were reverted</string>
 
 </resources>

@@ -41,7 +41,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.setOnClickListener((v -> {
             NavGraphDirections.ActionGlobalRecordsListFragment action =
                     RecordsListFragmentDirections.actionGlobalRecordsListFragment();
-            action.setRecordsList(currList);
+            action.setRecordsListId(currList.getId());
             Navigation.findNavController(v).navigate(action);
         }));
 

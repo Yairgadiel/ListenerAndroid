@@ -99,7 +99,7 @@
 
     <Button
         android:id="@+id/create_btn"
-        android:layout_width="@dimen/btn_width"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/create"

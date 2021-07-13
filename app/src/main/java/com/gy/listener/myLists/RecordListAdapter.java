@@ -33,15 +33,17 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
     private final List<Record> _data;
     private final ListType _listType;
     private final MutableLiveData<Boolean> _isAdding;
+    private final MutableLiveData<Boolean> _isChanged;
 
     private boolean _isEditing;
 
-    public RecordListAdapter(@NonNull RecordsList recordsList, @NonNull MutableLiveData<Boolean> isAdding) {
+    public RecordListAdapter(@NonNull RecordsList recordsList, @NonNull MutableLiveData<Boolean> isAdding, @NonNull MutableLiveData<Boolean> isChanged) {
         _data = recordsList.getRecords();
         _listType = recordsList.getListType();
         _isEditing = false;
 
         _isAdding = isAdding;
+        _isChanged = isChanged;
         _isAdding.observeForever(b -> notifyDataSetChanged());
     }
 
@@ -157,7 +159,13 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            ((CheckedRecord) _data.get(_position)).setIsChecked(isChecked);
+            CheckedRecord currRecord = (CheckedRecord) _data.get(_position);
+
+            // Checking if checked actually changed
+            if (currRecord.getIsChecked() != isChecked) {
+                ((CheckedRecord) _data.get(_position)).setIsChecked(isChecked);
+                _isChanged.setValue(true);
+            }
         }
     }
 
@@ -178,7 +186,13 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            _data.get(_position).setText(charSequence.toString());
+            Record currRecord = _data.get(_position);
+
+            // Checking if text actually changed
+            if (!charSequence.toString().equals(currRecord.getText())) {
+                _data.get(_position).setText(charSequence.toString());
+                _isChanged.setValue(true);
+            }
         }
 
         @Override

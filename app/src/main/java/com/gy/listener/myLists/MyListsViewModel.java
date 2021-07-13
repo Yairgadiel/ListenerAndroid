@@ -17,4 +17,16 @@ public class MyListsViewModel extends ViewModel {
     public LiveData<List<RecordsList>> getData() {
         return _data;
     }
+
+    public RecordsList getRecordsListById(String id) {
+        return MyListsRepository.getInstance().getCopyRecordsListById(id);
+    }
+
+    public void addRecordsList(RecordsList recordsList) {
+        MyListsRepository.getInstance().addRecordsList(recordsList);
+    }
+
+    public void updateRecordsList(RecordsList recordsList) {
+        MyListsRepository.getInstance().updateRecordsList(recordsList);
+    }
 }
