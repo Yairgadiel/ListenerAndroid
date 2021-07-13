@@ -1,9 +1,8 @@
-package com.gy.listener;
+package com.gy.listener.ui;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +10,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.gy.listener.R;
 import com.gy.listener.db.DatabaseHelper;
 import com.gy.listener.db.IRecordsListDAO;
 
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IRecordsListDAO dao = DatabaseHelper.db.itemsListDAO();
+        IRecordsListDAO dao = DatabaseHelper.db.recordsListDAO();
 
         _navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 

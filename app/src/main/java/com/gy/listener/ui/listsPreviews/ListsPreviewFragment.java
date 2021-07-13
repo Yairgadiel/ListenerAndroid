@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.ui.listsPreviews;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,30 +9,29 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gy.listener.CardAdapter;
 import com.gy.listener.R;
+import com.gy.listener.ui.RecordsListsViewModel;
 
-public class MyListsFragment extends Fragment {
+public class ListsPreviewFragment extends Fragment {
 
-    private MyListsViewModel _viewModel;
-    private CardAdapter _adapter;
+    private RecordsListsViewModel _viewModel;
+    private ListPreviewAdapter _adapter;
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
+        _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 
         _viewModel.getData().observe(getViewLifecycleOwner(),
                 (data) -> _adapter.notifyDataSetChanged());
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_lists, container, false);
+        return inflater.inflate(R.layout.fragment_lists_previews, container, false);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class MyListsFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         previews.setLayoutManager(layoutManager);
 
-        _adapter = new CardAdapter(_viewModel.getData());
+        _adapter = new ListPreviewAdapter(_viewModel.getData());
         previews.setAdapter(_adapter);
     }
 }

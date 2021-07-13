@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.ui.listAddition;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,8 +19,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.NavGraphDirections;
 import com.gy.listener.R;
-import com.gy.listener.myLists.models.ListType;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.model.items.ListType;
+import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.ui.recordsList.RecordsListFragmentDirections;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class ListAdditionFragment extends Fragment {
 
-    private MyListsViewModel _viewModel;
+    private RecordsListsViewModel _viewModel;
 
     // region UI Members
 
@@ -56,7 +58,7 @@ public class ListAdditionFragment extends Fragment {
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
+        _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_addition, container, false);

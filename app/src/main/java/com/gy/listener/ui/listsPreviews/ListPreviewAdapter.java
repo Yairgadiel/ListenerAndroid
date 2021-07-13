@@ -1,4 +1,4 @@
-package com.gy.listener;
+package com.gy.listener.ui.listsPreviews;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,16 +11,18 @@ import androidx.lifecycle.LiveData;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gy.listener.myLists.RecordsListFragmentDirections;
-import com.gy.listener.myLists.models.RecordsList;
+import com.gy.listener.NavGraphDirections;
+import com.gy.listener.R;
+import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.ui.recordsList.RecordsListFragmentDirections;
 
 import java.util.List;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
+public class ListPreviewAdapter extends RecyclerView.Adapter<ListPreviewAdapter.CardViewHolder> {
 
     private final LiveData<List<RecordsList>> _data;
 
-    public CardAdapter(LiveData<List<RecordsList>> lists) {
+    public ListPreviewAdapter(LiveData<List<RecordsList>> lists) {
         _data = lists;
     }
 
