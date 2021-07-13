@@ -11,19 +11,27 @@ import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.gy.listener.NavGraphDirections;
 import com.gy.listener.R;
+import com.gy.listener.myLists.models.ListType;
+import com.gy.listener.myLists.models.RecordsList;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListAdditionFragment extends Fragment {
+
+    private MyListsViewModel _viewModel;
 
     // region UI Members
 
@@ -47,6 +55,9 @@ public class ListAdditionFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        _viewModel = new ViewModelProvider(this).get(MyListsViewModel.class);
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_addition, container, false);
     }
@@ -71,14 +82,19 @@ public class ListAdditionFragment extends Fragment {
         view.findViewById(R.id.create_btn).setOnClickListener(v -> {
 
             if (validateInput()) {
-                MyListsRepository.getInstance().addItemsList(new RecordsList(
+                _viewModel.addRecordsList(new RecordsList(
                         _id.getText().toString(),
                         _name.getText().toString(),
                         _details.getText().toString(),
                         ListType.GROCERIES
                 ));
 
-                Navigation.findNavController(v).popBackStack();
+                // TODO currently not working well. We need to wait until the item stops being added
+                // Navigate to the added list's fragment
+                NavGraphDirections.ActionGlobalRecordsListFragment action =
+                        RecordsListFragmentDirections.actionGlobalRecordsListFragment();
+                action.setRecordsListId(_id.getText().toString());
+                Navigation.findNavController(v).navigate(action);
             }
         });
     }
@@ -87,14 +103,17 @@ public class ListAdditionFragment extends Fragment {
         _id = rootView.findViewById(R.id.list_id);
         _idLayout = rootView.findViewById(R.id.list_id_layout);
         _idLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _idLayout.setEndIconActivated(true);
 
         _name = rootView.findViewById(R.id.list_name);
         _nameLayout = rootView.findViewById(R.id.list_name_layout);
         _nameLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _nameLayout.setEndIconActivated(true);
 
         _details = rootView.findViewById(R.id.list_details);
         _detailsLayout = rootView.findViewById(R.id.list_details_layout);
         _detailsLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        _detailsLayout.setEndIconActivated(true);
 
         _listType = rootView.findViewById(R.id.list_type);
         _listTypeLayout = rootView.findViewById(R.id.list_type_layout);
@@ -104,9 +123,22 @@ public class ListAdditionFragment extends Fragment {
     }
 
     private void setListTypeAdapter() {
-        ArrayAdapter typesAdapter = new ArrayAdapter<>(getContext(),
+        List<String> listTypes;
+
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
+            listTypes = new ArrayList<>(ListType.values().length);
+
+            for (int i = 0; i < ListType.values().length; i++) {
+                listTypes.add(TextUtils.toPascalCase(ListType.values()[i].name()));
+            }
+        }
+        else {
+            listTypes = Arrays.stream(ListType.values()).map(e -> TextUtils.toPascalCase(e.name())).collect(Collectors.toList());
+        }
+
+        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.dropdown_menu_popup_item,
-                Arrays.stream(ListType.values()).map(e->TextUtils.toPascalCase(e.name())).collect(Collectors.toList()));
+                listTypes);
         _listType.setAdapter(typesAdapter);
 
         _listType.setOnItemClickListener((parent, view, position, id) -> {

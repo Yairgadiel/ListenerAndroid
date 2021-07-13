@@ -1,4 +1,4 @@
-package com.gy.listener.myLists;
+package com.gy.listener.myLists.models;
 
 import androidx.annotation.Nullable;
 
