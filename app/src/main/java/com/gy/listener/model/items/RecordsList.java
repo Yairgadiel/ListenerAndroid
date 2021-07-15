@@ -8,8 +8,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.gy.listener.db.DataConverter;
-import com.gy.listener.db.DbContract;
+import com.gy.listener.model.db.DataConverter;
+import com.gy.listener.model.db.DbContract;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -11,8 +11,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.gy.listener.R;
-import com.gy.listener.db.DatabaseHelper;
-import com.gy.listener.db.IRecordsListDAO;
+import com.gy.listener.model.db.DatabaseHelper;
+import com.gy.listener.model.db.IRecordsListDAO;
 
 public class MainActivity extends AppCompatActivity {
 

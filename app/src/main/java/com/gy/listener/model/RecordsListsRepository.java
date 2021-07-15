@@ -3,7 +3,7 @@ package com.gy.listener.model;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
-import com.gy.listener.db.DatabaseHelper;
+import com.gy.listener.model.db.DatabaseHelper;
 import com.gy.listener.model.items.Record;
 import com.gy.listener.model.items.RecordsList;
 

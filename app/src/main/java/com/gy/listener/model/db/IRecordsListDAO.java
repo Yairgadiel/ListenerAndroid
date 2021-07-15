@@ -1,4 +1,4 @@
-package com.gy.listener.db;
+package com.gy.listener.model.db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
