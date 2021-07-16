@@ -104,7 +104,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/create"
         app:icon="@android:drawable/ic_input_add"
-        android:backgroundTint="@color/add_green"
+        app:backgroundTint="@color/add_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cancel_btn" />
@@ -116,7 +116,7 @@
         android:layout_marginEnd="16dp"
         android:text="@string/cancel"
         app:icon="@android:drawable/ic_delete"
-        android:backgroundTint="@android:color/holo_red_dark"
+        app:backgroundTint="@android:color/holo_red_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/create_btn"
         app:layout_constraintStart_toStartOf="parent" />
