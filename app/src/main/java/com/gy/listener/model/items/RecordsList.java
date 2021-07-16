@@ -8,6 +8,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
 import com.gy.listener.model.db.DataConverter;
 import com.gy.listener.model.db.DbContract;
 
@@ -22,20 +24,23 @@ public class RecordsList implements Serializable, IJsonConverter {
 
     // region Constants
 
-    private static final String ID =
+    public static final String ID =
             "Id";
 
-    private static final String NAME =
+    public static final String NAME =
             "Name";
 
-    private static final String DETAILS =
+    public static final String DETAILS =
             "Details";
 
-    private static final String TYPE =
+    public static final String TYPE =
             "Type";
 
-    private static final String RECORDS =
+    public static final String RECORDS =
             "Records";
+
+    public static final String LAST_UPDATED =
+            "LastUpdated";
 
     // endsregion
 
@@ -59,16 +64,20 @@ public class RecordsList implements Serializable, IJsonConverter {
     @TypeConverters(DataConverter.class)
     private List<Record> _records;
 
+    @ColumnInfo(name = "list_update")
+    private Long _lastUpdated;
+
     // endregion
 
     // region C'tor
 
-    public RecordsList(@NonNull String id, @NonNull String name, @Nullable String details, ListType listType, List<Record> records) {
+    public RecordsList(@NonNull String id, @NonNull String name, @Nullable String details, ListType listType, List<Record> records, Long lastUpdated) {
         this._id = id;
         this._name = name;
         this._details = details;
         this._listType = listType;
         this._records = records;
+        this._lastUpdated = lastUpdated;
     }
 
     @Ignore
@@ -126,6 +135,14 @@ public class RecordsList implements Serializable, IJsonConverter {
         _records = records;
     }
 
+    public Long getLastUpdated() {
+        return _lastUpdated;
+    }
+
+    public void setLastUpdated(Long lastUpdated) {
+        _lastUpdated = lastUpdated;
+    }
+
     // endregion
 
     // region IJsonConverter
@@ -140,6 +157,7 @@ public class RecordsList implements Serializable, IJsonConverter {
         json.put(DETAILS, _details);
         json.put(TYPE, (int) _listType.ordinal());
         json.put(RECORDS, recordsConverter.fromRecordsList(_records));
+        json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
         return json;
     }
@@ -152,7 +170,8 @@ public class RecordsList implements Serializable, IJsonConverter {
                 (String) json.get(NAME),
                 (String) json.get(DETAILS),
                 ListType.values()[((Long) json.get(TYPE)).intValue()],
-                recordsConverter.toRecordsList((String) json.get(RECORDS)));
+                recordsConverter.toRecordsList((String) json.get(RECORDS)),
+                ((Timestamp) json.get(LAST_UPDATED) == null) ? 0 : ((Timestamp) json.get(LAST_UPDATED)).getSeconds());
     }
 
     // endregion

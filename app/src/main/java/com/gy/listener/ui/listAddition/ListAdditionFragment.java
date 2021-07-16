@@ -1,6 +1,7 @@
 package com.gy.listener.ui.listAddition;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -8,21 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.gy.listener.NavGraphDirections;
 import com.gy.listener.R;
-import com.gy.listener.ui.RecordsListsViewModel;
 import com.gy.listener.model.items.ListType;
 import com.gy.listener.model.items.RecordsList;
-import com.gy.listener.ui.recordsList.RecordsListFragmentDirections;
+import com.gy.listener.ui.RecordsListsViewModel;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
@@ -82,22 +81,26 @@ public class ListAdditionFragment extends Fragment {
                         .popBackStack());
 
         view.findViewById(R.id.create_btn).setOnClickListener(v -> {
-
             if (validateInput()) {
-                _viewModel.addRecordsList(new RecordsList(
-                        _id.getText().toString(),
-                        _name.getText().toString(),
-                        _details.getText().toString(),
-                        ListType.GROCERIES
-                ),
-                        b->{});
+                Log.d("LISTENER", "add list");
+                _viewModel.setRecordsList(new RecordsList(_id.getText().toString(),
+                                _name.getText().toString(),
+                                _details.getText().toString(),
+                                ListType.GROCERIES),
+                        isSuccess -> {
+                            // Stop loading TODO
+                            Log.d("LISTENER", "add list is success " + isSuccess);
 
-                // TODO currently not working well. We need to wait until the item stops being added
-                // Navigate to the added list's fragment
-                NavGraphDirections.ActionGlobalRecordsListFragment action =
-                        RecordsListFragmentDirections.actionGlobalRecordsListFragment();
-                action.setRecordsListId(_id.getText().toString());
-                Navigation.findNavController(v).navigate(action);
+                            requireActivity().runOnUiThread(() -> {
+                                if (!isSuccess) {
+                                    Toast.makeText(getContext(), R.string.addition_failed, Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    NavHostFragment.findNavController(ListAdditionFragment.this)
+                                            .popBackStack();
+                                }
+                            });
+                        });
             }
         });
     }

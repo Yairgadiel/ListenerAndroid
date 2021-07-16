@@ -1,5 +1,7 @@
 package com.gy.listener.ui;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,7 +15,7 @@ public class RecordsListsViewModel extends ViewModel {
     private final LiveData<List<RecordsList>> _data;
 
     public RecordsListsViewModel() {
-        _data = RecordsListsRepository.getInstance().getAllLists();
+        _data = RecordsListsRepository.getInstance().getAllLists(b-> Log.d("LISTENER", "Lists retrieval success: " + b));
     }
 
     public LiveData<List<RecordsList>> getData() {
@@ -24,11 +26,11 @@ public class RecordsListsViewModel extends ViewModel {
         return RecordsListsRepository.getInstance().getCopyRecordsListById(id);
     }
 
-    public void addRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+    public void setRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
         RecordsListsRepository.getInstance().addRecordsList(recordsList, listener);
     }
 
-    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
-        RecordsListsRepository.getInstance().updateRecordsList(recordsList, listener);
-    }
+//    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+//        RecordsListsRepository.getInstance().updateRecordsList(recordsList, listener);
+//    }
 }

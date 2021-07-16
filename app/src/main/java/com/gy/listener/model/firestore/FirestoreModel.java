@@ -1,5 +1,6 @@
 package com.gy.listener.model.firestore;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gy.listener.model.items.RecordsList;
@@ -58,8 +59,9 @@ public class FirestoreModel {
                 });
     }
 
-    public void getAllRecordsList(IOnRecordsListsFetchListener listener) {
+    public void getAllRecordsList(Long since, IOnRecordsListsFetchListener listener) {
         _firestoreDb.collection(RECORDS_LIST_COLLECTION)
+                .whereGreaterThanOrEqualTo(RecordsList.LAST_UPDATED, new Timestamp(since, 0))
                 .get()
                 .addOnCompleteListener(task -> {
                     List<RecordsList> data = null;

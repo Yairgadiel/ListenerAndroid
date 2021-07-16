@@ -175,7 +175,7 @@ public class RecordsListFragment extends Fragment {
                 _currRecordsList.getRecords().remove(_adapter.getItemCount() - 1);
             }
 
-            _viewModel.updateRecordsList(_currRecordsList, b->{});
+            _viewModel.setRecordsList(_currRecordsList, b->{});
 
             // No longer in adding mode
             _isAdding.postValue(false);
