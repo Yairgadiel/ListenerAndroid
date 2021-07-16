@@ -2,10 +2,12 @@ package com.gy.listener.model;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import com.gy.listener.model.db.DatabaseHelper;
+import com.gy.listener.model.firestore.FirestoreModel;
 import com.gy.listener.model.items.Record;
 import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.events.IOnCompleteListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +15,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RecordsListsRepository {
-    private LiveData<List<RecordsList>> _lists;
-    private ExecutorService _executorService = Executors.newSingleThreadExecutor();
 
+    // region Members
+
+    private final ExecutorService _executorService = Executors.newSingleThreadExecutor();
+    private final MutableLiveData<List<RecordsList>> _lists;
+
+    // endregion
 
     // region Singleton
 
     private static RecordsListsRepository _instance;
 
     private RecordsListsRepository() {
+        _lists = new MutableLiveData<>(new ArrayList<>());
     }
 
     public static RecordsListsRepository getInstance() {
@@ -36,16 +43,34 @@ public class RecordsListsRepository {
 
     // region Public Methods
 
-    public void addRecordsList(RecordsList recordsList) {
-        _executorService.execute(() -> {
-            DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
-        });
+    public void addRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+        FirestoreModel.getInstance().setRecordsList(recordsList, listener);
+
+//        _executorService.execute(() -> {
+//            DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
+//        });
     }
 
-    public void updateRecordsList(RecordsList recordsList) {
-        _executorService.execute(() -> {
-            DatabaseHelper.db.recordsListDAO().update(recordsList);
+    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+//        _executorService.execute(() -> {
+//            DatabaseHelper.db.recordsListDAO().update(recordsList);
+//        });
+        FirestoreModel.getInstance().setRecordsList(recordsList, listener);
+    }
+
+    public LiveData<List<RecordsList>> getAllLists(/*IOnCompleteListener listener*/) {
+//        if (_lists == null) {
+//             Loading...
+//            _lists = DatabaseHelper.db.recordsListDAO().getAll();
+//             ObserveForever -> loaded
+//        }
+
+        FirestoreModel.getInstance().getAllRecordsList(data -> {
+            /*listener.onComplete(data != null);*/
+            _lists.setValue(data);
         });
+
+        return _lists;
     }
 
     /**
@@ -76,16 +101,6 @@ public class RecordsListsRepository {
         }
 
         return recordsList;
-    }
-
-    public LiveData<List<RecordsList>> getAllLists() {
-        if (_lists == null) {
-            // Loading...
-            _lists = DatabaseHelper.db.recordsListDAO().getAll();
-            // ObserveForever -> loaded
-        }
-
-        return _lists;
     }
 
     // endregion

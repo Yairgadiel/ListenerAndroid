@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.gy.listener.model.RecordsListsRepository;
 import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.events.IOnCompleteListener;
 
 import java.util.List;
 
@@ -23,11 +24,11 @@ public class RecordsListsViewModel extends ViewModel {
         return RecordsListsRepository.getInstance().getCopyRecordsListById(id);
     }
 
-    public void addRecordsList(RecordsList recordsList) {
-        RecordsListsRepository.getInstance().addRecordsList(recordsList);
+    public void addRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+        RecordsListsRepository.getInstance().addRecordsList(recordsList, listener);
     }
 
-    public void updateRecordsList(RecordsList recordsList) {
-        RecordsListsRepository.getInstance().updateRecordsList(recordsList);
+    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
+        RecordsListsRepository.getInstance().updateRecordsList(recordsList, listener);
     }
 }

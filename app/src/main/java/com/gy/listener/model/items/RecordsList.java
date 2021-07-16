@@ -13,10 +13,31 @@ import com.gy.listener.model.db.DbContract;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity(tableName = DbContract.RECORDS_LIST_TABLE)
-public class RecordsList implements Serializable {
+public class RecordsList implements Serializable, IJsonConverter {
+
+    // region Constants
+
+    private static final String ID =
+            "Id";
+
+    private static final String NAME =
+            "Name";
+
+    private static final String DETAILS =
+            "Details";
+
+    private static final String TYPE =
+            "Type";
+
+    private static final String RECORDS =
+            "Records";
+
+    // endsregion
 
     // region Members
 
@@ -103,6 +124,35 @@ public class RecordsList implements Serializable {
 
     void setRecords(List<Record> records) {
         _records = records;
+    }
+
+    // endregion
+
+    // region IJsonConverter
+
+    @Override
+    public Map<String, Object> toJson() {
+        DataConverter recordsConverter = new DataConverter();
+
+        Map<String, Object> json = new HashMap<>();
+        json.put(ID, _id);
+        json.put(NAME, _name);
+        json.put(DETAILS, _details);
+        json.put(TYPE, (int) _listType.ordinal());
+        json.put(RECORDS, recordsConverter.fromRecordsList(_records));
+
+        return json;
+    }
+    
+    public static RecordsList create(Map<String, Object> json) {
+        DataConverter recordsConverter = new DataConverter();
+
+        return new RecordsList(
+                (String) json.get(ID),
+                (String) json.get(NAME),
+                (String) json.get(DETAILS),
+                ListType.values()[((Long) json.get(TYPE)).intValue()],
+                recordsConverter.toRecordsList((String) json.get(RECORDS)));
     }
 
     // endregion

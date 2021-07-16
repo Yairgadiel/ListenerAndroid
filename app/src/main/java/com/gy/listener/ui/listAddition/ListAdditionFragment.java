@@ -89,7 +89,8 @@ public class ListAdditionFragment extends Fragment {
                         _name.getText().toString(),
                         _details.getText().toString(),
                         ListType.GROCERIES
-                ));
+                ),
+                        b->{});
 
                 // TODO currently not working well. We need to wait until the item stops being added
                 // Navigate to the added list's fragment
