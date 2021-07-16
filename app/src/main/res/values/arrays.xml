@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="list_colors">
+        <item>#AA443C</item>
+        <item>#4D5FC6</item>
+        <item>#4CAF50</item>
+        <item>#AE35C3</item>
+        <item>#2196F3</item>
+        <item>#FFC107</item>
+        <item>#E91E63</item>
+        <item>#119186</item>
+    </array>
+</resources>
