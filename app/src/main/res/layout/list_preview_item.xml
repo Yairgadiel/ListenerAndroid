@@ -9,13 +9,12 @@
     android:layout_centerInParent="true"
     card_view:cardBackgroundColor="#4CAF50"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="8dp"
+    card_view:cardElevation="16dp"
     android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent" >
 
         <ImageView
             android:id="@+id/list_prev_img"

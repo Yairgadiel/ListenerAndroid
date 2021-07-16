@@ -1,5 +1,6 @@
 package com.gy.listener.ui.listsPreviews;
 
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LiveData;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +32,7 @@ public class ListPreviewAdapter extends RecyclerView.Adapter<ListPreviewAdapter.
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(parent.getContext())
+        CardView view = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_preview_item, parent, false);
 
         return new CardViewHolder(view);
@@ -47,6 +49,7 @@ public class ListPreviewAdapter extends RecyclerView.Adapter<ListPreviewAdapter.
             Navigation.findNavController(v).navigate(action);
         }));
 
+        holder.setBackgroundColorIndex(position);
         holder.setName(currList.getName());
         holder.setDetails(currList.getDetails());
         holder.setImage(1);
@@ -62,18 +65,25 @@ public class ListPreviewAdapter extends RecyclerView.Adapter<ListPreviewAdapter.
      * (custom ViewHolder).
      */
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        private final View  _container;
+        private final CardView _container;
         private final TextView _listName;
         private final TextView _listDetails;
         private final ImageView _listImg;
 
-        public CardViewHolder(View view) {
+        public CardViewHolder(CardView view) {
             super(view);
 
             _container = view;
             _listName = view.findViewById(R.id.list_prev_name);
             _listDetails = view.findViewById(R.id.list_prev_details);
             _listImg = view.findViewById(R.id.list_prev_img);
+        }
+
+        public void setBackgroundColorIndex(int colorIndex) {
+            TypedArray colors = _container.getContext().getResources().obtainTypedArray(R.array.list_colors);
+            _container.setCardBackgroundColor(colors.getColor(colorIndex % colors.length(), 0));
+
+            colors.recycle();
         }
 
         public void setName(String name) {
