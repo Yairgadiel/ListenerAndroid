@@ -7,18 +7,23 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
+import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
+
+import java.util.List;
 
 public class ListsPreviewFragment extends Fragment {
 
     private RecordsListsViewModel _viewModel;
     private ListPreviewAdapter _adapter;
+    private LiveData<List<RecordsList>> _recordsLists;
 
     @Override
     public View onCreateView(
@@ -27,7 +32,8 @@ public class ListsPreviewFragment extends Fragment {
 
         _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 
-        _viewModel.getData().observe(getViewLifecycleOwner(),
+        _recordsLists = _viewModel.getData();
+        _recordsLists.observe(getViewLifecycleOwner(),
                 (data) -> _adapter.notifyDataSetChanged());
 
         // Inflate the layout for this fragment

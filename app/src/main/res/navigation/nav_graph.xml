@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/MyListsFragment">
+    app:startDestination="@id/ListsPreviewsFragment">
 
     <fragment
-        android:id="@+id/MyListsFragment"
+        android:id="@+id/ListsPreviewsFragment"
         android:name="com.gy.listener.ui.listsPreviews.ListsPreviewFragment"
         android:label="@string/my_lists_fragment_label"
         tools:layout="@layout/fragment_lists_previews">
@@ -46,8 +46,6 @@
         app:enterAnim="@anim/fragment_open_enter"
         app:exitAnim="@anim/fragment_open_exit"
         app:popEnterAnim="@anim/fragment_fade_enter"
-        app:popExitAnim="@anim/fragment_fade_exit"
-        app:popUpTo="@id/MyListsFragment">
-
+        app:popExitAnim="@anim/fragment_fade_exit">
     </action>
 </navigation>
