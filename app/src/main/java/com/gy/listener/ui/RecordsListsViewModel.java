@@ -19,6 +19,10 @@ public class RecordsListsViewModel extends ViewModel {
         if (_data == null) {
             _data = RecordsListsRepository.getInstance().getAllLists(listener);
         }
+        else {
+            // Nothing to load
+            listener.onComplete(true);
+        }
 
         return _data;
     }
