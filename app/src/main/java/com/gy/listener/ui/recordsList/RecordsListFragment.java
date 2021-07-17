@@ -22,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.gy.listener.R;
 import com.gy.listener.ui.RecordsListsViewModel;
 import com.gy.listener.model.items.CheckedRecord;
@@ -38,6 +39,11 @@ public class RecordsListFragment extends Fragment {
     private TextView _details;
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
+    private CircularProgressIndicator _loader;
+
+    // endregio
+
+    // region Members
 
     private RecordsListsViewModel _viewModel;
     private RecordsList _currRecordsList;
@@ -151,6 +157,7 @@ public class RecordsListFragment extends Fragment {
         _details = rootView.findViewById(R.id.list_details);
         _records = rootView.findViewById(R.id.records);
         _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
+        _loader = rootView.findViewById(R.id.loader);
     }
 
     private void promptSaveIfChanged() {
@@ -182,13 +189,14 @@ public class RecordsListFragment extends Fragment {
                 _currRecordsList.getRecords().remove(_adapter.getItemCount() - 1);
             }
 
-            _viewModel.setRecordsList(_currRecordsList, b->{});
+            _loader.setVisibility(View.VISIBLE);
+            _viewModel.setRecordsList(_currRecordsList, b-> requireActivity().runOnUiThread(() -> _loader.setVisibility(View.GONE)));
 
             // No longer in adding mode
             _isAdding.postValue(false);
             _isChanged.setValue(false);
 
-            Toast.makeText(getContext(), R.string.successfully_saved, Toast.LENGTH_SHORT).show();
+            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_saved, Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -208,7 +216,7 @@ public class RecordsListFragment extends Fragment {
 
             _isChanged.setValue(false);
 
-            Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show();
+            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show());
         }
     }
 

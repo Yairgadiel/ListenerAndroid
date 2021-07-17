@@ -99,7 +99,7 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         setLoadingState(false);
 
         if (!isSuccess) {
-            Toast.makeText(getContext(), R.string.fetching_failed, Toast.LENGTH_SHORT).show();
+            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.fetching_failed, Toast.LENGTH_SHORT).show());
         }
     }
 

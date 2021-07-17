@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
@@ -49,6 +50,8 @@ public class ListAdditionFragment extends Fragment {
     private TextInputLayout _listTypeLayout;
     private ListType _selectedType = null;
 
+    private CircularProgressIndicator _loader;
+
     // endregion
 
     @Override
@@ -81,17 +84,22 @@ public class ListAdditionFragment extends Fragment {
                         .popBackStack());
 
         view.findViewById(R.id.create_btn).setOnClickListener(v -> {
+            _loader.setVisibility(View.VISIBLE);
+
             if (validateInput()) {
                 Log.d("LISTENER", "add list");
+
                 _viewModel.setRecordsList(new RecordsList(_id.getText().toString(),
                                 _name.getText().toString(),
                                 _details.getText().toString(),
                                 _selectedType),
                         isSuccess -> {
-                            // Stop loading TODO
                             Log.d("LISTENER", "add list is success " + isSuccess);
 
                             requireActivity().runOnUiThread(() -> {
+                                // Stop "loading"
+                                _loader.setVisibility(View.GONE);
+
                                 if (!isSuccess) {
                                     Toast.makeText(getContext(), R.string.addition_failed, Toast.LENGTH_SHORT).show();
                                 }
@@ -101,6 +109,10 @@ public class ListAdditionFragment extends Fragment {
                                 }
                             });
                         });
+            }
+            else {
+                // Invalid, stop "loading"
+                _loader.setVisibility(View.GONE);
             }
         });
     }
@@ -123,6 +135,8 @@ public class ListAdditionFragment extends Fragment {
 
         _listType = rootView.findViewById(R.id.list_type);
         _listTypeLayout = rootView.findViewById(R.id.list_type_layout);
+
+        _loader = rootView.findViewById(R.id.addition_loader);
 
         InputUtils.addTextValidator(_id, _idLayout);
         InputUtils.addTextValidator(_name, _nameLayout);
