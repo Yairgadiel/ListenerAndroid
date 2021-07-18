@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.gy.listener.model.RecordsListsRepository;
+import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.model.events.IOnCompleteListener;
 
@@ -37,6 +38,10 @@ public class RecordsListsViewModel extends ViewModel {
 
     public void refreshData(IOnCompleteListener listener) {
         RecordsListsRepository.getInstance().getAllLists(listener);
+    }
+
+    public void isIdAvailable(String id, IValidator validator) {
+        RecordsListsRepository.getInstance().isIdAvailable(id, validator);
     }
 
 //    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {

@@ -20,6 +20,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
+import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.ListType;
 import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
@@ -83,10 +84,10 @@ public class ListAdditionFragment extends Fragment {
                 NavHostFragment.findNavController(ListAdditionFragment.this)
                         .popBackStack());
 
-        view.findViewById(R.id.create_btn).setOnClickListener(v -> {
+        view.findViewById(R.id.create_btn).setOnClickListener(v -> validateInput(isValid -> {
             _loader.setVisibility(View.VISIBLE);
 
-            if (validateInput()) {
+            if (isValid) {
                 Log.d("LISTENER", "add list");
 
                 _viewModel.setRecordsList(new RecordsList(_id.getText().toString(),
@@ -169,14 +170,10 @@ public class ListAdditionFragment extends Fragment {
 
     /**
      * This method validates the input and actively sets errors in cases of values yet to be set
-     * @return boolean indicating whether the input is valid
+     * @param idValidator validator listener for the input validation
      */
-    private boolean validateInput() {
-        if ((_id.getText() == null || _id.getText().toString().equals(""))) {
-            _idLayout.setError(getString(R.string.empty_string_error));
-        }
-
-        if ((_name.getText() == null || _name.getText().toString().equals(""))) {
+    private void validateInput(IValidator idValidator) {
+        if ((_name.getText() == null || _name.getText().toString().isEmpty())) {
             _nameLayout.setError(getString(R.string.empty_string_error));
         }
 
@@ -184,6 +181,25 @@ public class ListAdditionFragment extends Fragment {
             _listTypeLayout.setError(getString(R.string.none_selected_error));
         }
 
+        if ((_id.getText() == null || _id.getText().toString().isEmpty())) {
+            _idLayout.setError(getString(R.string.empty_string_error));
+            idValidator.isValid(isNotError());
+        }
+        else {
+            _viewModel.isIdAvailable(_id.getText().toString(), isValid -> {
+                if (!isValid) {
+                    _idLayout.setError(getString(R.string.id_taken_error));
+                }
+
+                idValidator.isValid(isValid && isNotError());
+            });
+        }
+    }
+
+    /**
+     * Method checks if any of the input views are NOT in error state
+     */
+    private boolean isNotError() {
         return _idLayout.getError() == null &&
                 _nameLayout.getError() == null &&
                 _listTypeLayout.getError() == null;
