@@ -41,7 +41,7 @@ public class RecordsListFragment extends Fragment {
     private ImageButton _addRecordBtn;
     private CircularProgressIndicator _loader;
 
-    // endregio
+    // endregion
 
     // region Members
 
@@ -190,13 +190,19 @@ public class RecordsListFragment extends Fragment {
             }
 
             _loader.setVisibility(View.VISIBLE);
-            _viewModel.setRecordsList(_currRecordsList, b-> requireActivity().runOnUiThread(() -> _loader.setVisibility(View.GONE)));
+            _viewModel.setRecordsList(_currRecordsList, isSuccess -> {
+                if (getActivity() != null && isAdded()) {
+                    getActivity().runOnUiThread(() -> {
+                        _loader.setVisibility(View.GONE);
 
-            // No longer in adding mode
-            _isAdding.postValue(false);
-            _isChanged.setValue(false);
+                        Toast.makeText(getContext(), isSuccess ? R.string.successfully_saved : R.string.save_failed, Toast.LENGTH_SHORT).show();
 
-            requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_saved, Toast.LENGTH_SHORT).show());
+                        // No longer in adding mode
+                        _isAdding.postValue(false);
+                        _isChanged.setValue(false);
+                    });
+                }
+            });
         }
     }
 
