@@ -126,6 +126,14 @@ public class RecordsListFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        _navigateBackListener.setEnabled(false);
+        _navigateBackListener.remove();
+    }
+
+    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_save, menu);
