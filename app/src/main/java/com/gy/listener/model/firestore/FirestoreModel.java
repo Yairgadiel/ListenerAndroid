@@ -3,6 +3,7 @@ package com.gy.listener.model.firestore;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.model.events.IOnCompleteListener;
 import com.gy.listener.model.events.IOnRecordsListsFetchListener;
@@ -62,6 +63,25 @@ public class FirestoreModel {
     public void getAllRecordsList(Long since, IOnRecordsListsFetchListener listener) {
         _firestoreDb.collection(RECORDS_LIST_COLLECTION)
                 .whereGreaterThanOrEqualTo(RecordsList.LAST_UPDATED, new Timestamp(since, 0))
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<RecordsList> data = null;
+
+                    if (task.isSuccessful()) {
+                        data = new ArrayList<>(task.getResult().size());
+
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            data.add(RecordsList.create(doc.getData()));
+                        }
+                    }
+
+                    listener.onFetch(data);
+                });
+    }
+
+    public void getAllRecordsWithField(String field, String id, IOnRecordsListsFetchListener listener) {
+        _firestoreDb.collection(RECORDS_LIST_COLLECTION)
+                .whereEqualTo(field, id)
                 .get()
                 .addOnCompleteListener(task -> {
                     List<RecordsList> data = null;

@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData;
 
 import com.gy.listener.model.db.DatabaseHelper;
 import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnRecordsListsFetchListener;
+import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.firestore.FirestoreModel;
 import com.gy.listener.model.items.Record;
 import com.gy.listener.model.items.RecordsList;
@@ -110,6 +112,10 @@ public class RecordsListsRepository {
 
         // The data is updated automatically via ROOM on each insert
         return _lists;
+    }
+
+    public void isIdAvailable(String id, IValidator validator) {
+        FirestoreModel.getInstance().getAllRecordsWithField(RecordsList.ID, id, data -> validator.isValid(data.isEmpty()));
     }
 
     /**

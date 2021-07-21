@@ -22,6 +22,7 @@
     <string name="list_details_hint">Optional Details</string>
     <string name="list_type_hint">List Type</string>
 
+    <string name="id_taken_error">Id is already taken!</string>
     <string name="empty_string_error">Input can\'t be empty!</string>
     <string name="none_selected_error">Must choose an option!</string>
     <string name="invalid_toast">Input is invalid!</string>
