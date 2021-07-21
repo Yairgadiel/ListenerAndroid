@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity(tableName = DbContract.RECORDS_LIST_TABLE)
-public class RecordsList implements Serializable, IJsonConverter {
+public class RecordsList implements Serializable, IJsonConverter, Comparable {
 
     // region Constants
 
@@ -38,6 +38,9 @@ public class RecordsList implements Serializable, IJsonConverter {
 
     public static final String RECORDS =
             "Records";
+
+    public static final String DATE_CREATED =
+            "DateCreated";
 
     public static final String LAST_UPDATED =
             "LastUpdated";
@@ -64,6 +67,9 @@ public class RecordsList implements Serializable, IJsonConverter {
     @TypeConverters(DataConverter.class)
     private List<Record> _records;
 
+    @ColumnInfo(name = "list_date_created")
+    private long _dateCreated;
+
     @ColumnInfo(name = "list_update")
     private Long _lastUpdated;
 
@@ -71,12 +77,13 @@ public class RecordsList implements Serializable, IJsonConverter {
 
     // region C'tor
 
-    public RecordsList(@NonNull String id, @NonNull String name, @Nullable String details, ListType listType, List<Record> records, Long lastUpdated) {
+    public RecordsList(@NonNull String id, @NonNull String name, @Nullable String details, ListType listType, List<Record> records, long dateCreated, Long lastUpdated) {
         this._id = id;
         this._name = name;
         this._details = details;
         this._listType = listType;
         this._records = records;
+        this._dateCreated = dateCreated;
         this._lastUpdated = lastUpdated;
     }
 
@@ -87,6 +94,8 @@ public class RecordsList implements Serializable, IJsonConverter {
         this._details = details;
         this._listType = listType;
         this._records = new ArrayList<>();
+        this._dateCreated = System.currentTimeMillis();
+        this._lastUpdated = 0L;
     }
 
     // endregion
@@ -135,6 +144,14 @@ public class RecordsList implements Serializable, IJsonConverter {
         _records = records;
     }
 
+    public long getDateCreated() {
+        return _dateCreated;
+    }
+
+    public void setDateCreated(long dateCreated) {
+        _dateCreated = dateCreated;
+    }
+
     public Long getLastUpdated() {
         return _lastUpdated;
     }
@@ -157,6 +174,7 @@ public class RecordsList implements Serializable, IJsonConverter {
         json.put(DETAILS, _details);
         json.put(TYPE, (int) _listType.ordinal());
         json.put(RECORDS, recordsConverter.fromRecordsList(_records));
+        json.put(DATE_CREATED, _dateCreated);
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
         return json;
@@ -171,9 +189,20 @@ public class RecordsList implements Serializable, IJsonConverter {
                 (String) json.get(DETAILS),
                 ListType.values()[((Long) json.get(TYPE)).intValue()],
                 recordsConverter.toRecordsList((String) json.get(RECORDS)),
+                (long) json.get(DATE_CREATED),
                 ((Timestamp) json.get(LAST_UPDATED) == null) ? 0 : ((Timestamp) json.get(LAST_UPDATED)).getSeconds());
     }
 
     // endregion
+
+    // region Comparable
+
+    @Override
+    public int compareTo(Object o) {
+        return ((int) (((RecordsList) o)._dateCreated - _dateCreated));
+    }
+
+    // endregion
+
 
 }

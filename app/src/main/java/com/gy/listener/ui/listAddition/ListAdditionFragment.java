@@ -86,7 +86,7 @@ public class ListAdditionFragment extends Fragment {
                 _viewModel.setRecordsList(new RecordsList(_id.getText().toString(),
                                 _name.getText().toString(),
                                 _details.getText().toString(),
-                                ListType.GROCERIES),
+                                _selectedType),
                         isSuccess -> {
                             // Stop loading TODO
                             Log.d("LISTENER", "add list is success " + isSuccess);

@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 
 import com.gy.listener.MyApplication;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Helpers {
 
     // region Constants
@@ -14,6 +17,9 @@ public class Helpers {
 
     private static final String SP_RECORDS_LAST_UPDATE =
             "last_update";
+
+    private static final SimpleDateFormat format =
+            new SimpleDateFormat("dd/mm/yyyy");
 
     // endregion
 
@@ -30,6 +36,14 @@ public class Helpers {
         SharedPreferences sp =
                 MyApplication.getAppContext().getSharedPreferences(SP_FILE, Context.MODE_PRIVATE);
         return sp.getLong(SP_RECORDS_LAST_UPDATE, 0);
+    }
+
+    // endregion
+
+    // region Date
+
+    public static String getDateString(long timeInMillies) {
+        return format.format(new Date(timeInMillies));
     }
 
     // endregion

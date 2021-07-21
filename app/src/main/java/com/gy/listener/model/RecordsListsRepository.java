@@ -13,6 +13,7 @@ import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.utilities.Helpers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -93,6 +94,8 @@ public class RecordsListsRepository {
                 Helpers.setLocalLastUpdated(lastUpdate);
             }
 
+            Collections.sort(_lists.getValue());
+
             listener.onComplete(data != null);
         }));
 
@@ -122,6 +125,7 @@ public class RecordsListsRepository {
                         currList.getDetails(),
                         currList.getListType(),
                         copyRecords,
+                        currList.getDateCreated(),
                         currList.getLastUpdated());
 
                 break;

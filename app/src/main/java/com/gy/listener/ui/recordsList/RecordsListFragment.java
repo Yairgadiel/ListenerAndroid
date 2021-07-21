@@ -26,12 +26,15 @@ import com.gy.listener.R;
 import com.gy.listener.ui.RecordsListsViewModel;
 import com.gy.listener.model.items.CheckedRecord;
 import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.utilities.Helpers;
 
 public class RecordsListFragment extends Fragment {
 
     // region UI Members
 
     private Toolbar _toolbar;
+    private TextView _id;
+    private TextView _dateCreated;
     private TextView _details;
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
@@ -93,6 +96,8 @@ public class RecordsListFragment extends Fragment {
             }
             else {
                 _toolbar.setTitle(_currRecordsList.getName());
+                _id.setText(_currRecordsList.getId());
+                _dateCreated.setText(Helpers.getDateString(_currRecordsList.getDateCreated()));
 
                 _isAdding = new MutableLiveData<>(false);
                 _isChanged = new MutableLiveData<>(false);
@@ -141,6 +146,8 @@ public class RecordsListFragment extends Fragment {
     // region Private Methods
 
     private void initViews(@NonNull View rootView) {
+        _id = rootView.findViewById(R.id.list_id);
+        _dateCreated = rootView.findViewById(R.id.list_created);
         _details = rootView.findViewById(R.id.list_details);
         _records = rootView.findViewById(R.id.records);
         _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
