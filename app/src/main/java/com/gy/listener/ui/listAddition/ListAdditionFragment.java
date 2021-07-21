@@ -115,7 +115,7 @@ public class ListAdditionFragment extends Fragment {
                 // Invalid, stop "loading"
                 _loader.setVisibility(View.GONE);
             }
-        });
+        }));
     }
 
     private void initViews(@NonNull View rootView) {
