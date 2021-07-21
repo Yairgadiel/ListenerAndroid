@@ -14,7 +14,7 @@ public class FirestoreModel {
 
     // region Constants
 
-    private static final String RECORDS_LIST_COLLECTION = "records_list";
+    private static final String RECORDS_LIST_COLLECTION = "records_lists";
 
     // endregion
 

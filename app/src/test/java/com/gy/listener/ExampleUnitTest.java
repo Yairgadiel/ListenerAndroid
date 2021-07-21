@@ -3,6 +3,7 @@ package com.gy.listener;
 import com.gy.listener.model.db.DataConverter;
 import com.gy.listener.model.items.CheckedRecord;
 import com.gy.listener.model.items.Record;
+import com.gy.listener.utilities.Helpers;
 
 import org.junit.Test;
 
@@ -74,12 +75,13 @@ public class ExampleUnitTest {
 //        System.out.println(copyRecordsList.getListType());
 //        System.out.println(copyRecordsList.getName());
 //        System.out.println(copyRecordsList.getRecords().size());
-
-        CheckedRecord checkedRecord = new CheckedRecord("as", false);
-        Record record = checkedRecord;
-
-        Record copy = record.getClone();
-
-        assertFalse(((CheckedRecord) copy).getIsChecked());
+//
+//        CheckedRecord checkedRecord = new CheckedRecord("as", false);
+//        Record record = checkedRecord;
+//
+//        Record copy = record.getClone();
+//
+//        assertFalse(((CheckedRecord) copy).getIsChecked());
+        assertNotEquals(Helpers.getDateString(0), "1/1/1970");
     }
 }
