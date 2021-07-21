@@ -30,6 +30,8 @@
 
     <string name="save_changes_prompt">Would you like to save your changes?</string>
     <string name="addition_failed">Unable to create :(</string>
+    <string name="fetching_failed">Error fetching data :(</string>
+    <string name="save_failed">Unable to save :(</string>
     <string name="successfully_saved">Changes were saved successfully!</string>
     <string name="successfully_reverted">Changes were reverted</string>
 

@@ -6,11 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".ui.listsPreviews.ListsPreviewFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lists_prevs_rv"
-        app:flow_horizontalAlign="center"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/previews_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lists_prevs_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flow_horizontalAlign="center" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_fab"
@@ -19,10 +30,11 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/add_green"
+        app:backgroundTint="@color/add_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@android:color/holo_green_dark"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="list_add_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

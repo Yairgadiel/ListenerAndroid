@@ -76,28 +76,37 @@ public class RecordsListsRepository {
             // Get all updates from firesrore
             FirestoreModel.getInstance().getAllRecordsList(localLastUpdate, data -> _executorService.execute(() -> {
 
-            if (data != null) {
-                Log.d("LISTENER", "repo getAllLists data no null");
+                if (data != null) {
+                    Log.d("LISTENER", "repo getAllLists data no null");
 
-                Long lastUpdate = 0L;
+                    Long lastUpdate = 0L;
 
-                for (RecordsList recordsList : data) {
-                    // Update DB with the new list
-                    DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
+                    for (RecordsList recordsList : data) {
+                        // Update DB with the new list
+                        DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
 
-                    // Find last last update timestamp
-                    if (lastUpdate < recordsList.getLastUpdated()) {
-                        lastUpdate = recordsList.getLastUpdated();
+                        // Updating the local collection since ROOM f*cking refuses to do so
+                        for (RecordsList list : _lists.getValue()) {
+                            if (list.getId().equals(recordsList.getId())) {
+                                list.setRecords(recordsList.getRecords());
+
+                                break;
+                            }
+                        }
+
+                        // Find last last update timestamp
+                        if (lastUpdate < recordsList.getLastUpdated()) {
+                            lastUpdate = recordsList.getLastUpdated();
+                        }
                     }
+
+                    Helpers.setLocalLastUpdated(lastUpdate);
                 }
 
-                Helpers.setLocalLastUpdated(lastUpdate);
-            }
+    			Collections.sort(_lists.getValue());
 
-            Collections.sort(_lists.getValue());
-
-            listener.onComplete(data != null);
-        }));
+                listener.onComplete(data != null);
+            }));
 
         // The data is updated automatically via ROOM on each insert
         return _lists;

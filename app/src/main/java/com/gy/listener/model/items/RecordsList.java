@@ -140,7 +140,7 @@ public class RecordsList implements Serializable, IJsonConverter, Comparable {
         return _records;
     }
 
-    void setRecords(List<Record> records) {
+    public void setRecords(List<Record> records) {
         _records = records;
     }
 
