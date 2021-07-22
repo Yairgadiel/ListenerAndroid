@@ -19,7 +19,7 @@ public class Helpers {
             "last_update";
 
     private static final SimpleDateFormat format =
-            new SimpleDateFormat("dd/mm/yyyy");
+            new SimpleDateFormat("dd/MM/yyyy");
 
     // endregion
 
