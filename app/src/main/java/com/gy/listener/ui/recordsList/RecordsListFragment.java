@@ -186,7 +186,9 @@ public class RecordsListFragment extends Fragment {
             builder.create().show();
         }
         else {
-            NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+            if (isAdded()) {
+                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+            }
         }
     }
 

@@ -1,8 +1,10 @@
 package com.gy.listener.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,9 +12,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.firebase.ui.auth.AuthUI;
 import com.gy.listener.R;
-import com.gy.listener.model.db.DatabaseHelper;
-import com.gy.listener.model.db.IRecordsListDAO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,14 +24,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IRecordsListDAO dao = DatabaseHelper.db.recordsListDAO();
-
         _navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         setSupportActionBar(toolbar);
-//        toolbar.inflateMenu(R.menu.menu_main);
 
         NavigationUI.setupWithNavController(toolbar, _navController);
     }
@@ -52,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 getOnBackPressedDispatcher().onBackPressed();
                 return true;
-//                _navController.navigateUp();
-//
-//                break;
+            case R.id.action_logout:
+                logout();
+
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -65,4 +64,18 @@ public class MainActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
+
+    // region Authentication
+    private void logout() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener((v) -> {
+                    Toast.makeText(this, R.string.signed_out, Toast.LENGTH_SHORT).show();
+                    Log.d("LISTENER", "signed out");
+                    _navController.navigateUp();
+                });
+    }
+
+    // endregion
+    
 }

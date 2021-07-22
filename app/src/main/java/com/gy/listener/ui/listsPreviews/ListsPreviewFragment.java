@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +21,7 @@ import com.gy.listener.R;
 import com.gy.listener.model.events.IOnCompleteListener;
 import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.ui.recordsList.RecordsListFragmentArgs;
 
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
 
     // region UI Members
 
+    private Toolbar _toolbar;
     private RecyclerView _previews;
     private SwipeRefreshLayout _refreshLayout;
 
@@ -43,6 +47,13 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+
+        _toolbar = requireActivity().findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
+
+        if (getArguments() != null) {
+            ListsPreviewFragmentArgs.fromBundle(getArguments()).getUserId();
+        }
 
         _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 
@@ -55,7 +66,7 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.add_fab).setOnClickListener(
-                Navigation.createNavigateOnClickListener(R.id.action_myListsFragment_to_listAdditionFragment));
+                Navigation.createNavigateOnClickListener(R.id.action_listsPreviewsFragment_to_listAdditionFragment));
 
         initViews(view);
 
