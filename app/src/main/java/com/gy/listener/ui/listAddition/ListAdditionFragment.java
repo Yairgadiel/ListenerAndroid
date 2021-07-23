@@ -22,10 +22,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
 import com.gy.listener.model.events.IValidator;
-import com.gy.listener.model.items.ListType;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.ListType;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
-import com.gy.listener.ui.recordsList.RecordsListFragment;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 

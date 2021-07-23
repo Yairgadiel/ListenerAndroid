@@ -7,7 +7,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 
 import java.util.List;
 

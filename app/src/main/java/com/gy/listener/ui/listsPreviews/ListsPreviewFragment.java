@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -19,9 +18,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.gy.listener.R;
 import com.gy.listener.model.events.IOnCompleteListener;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
-import com.gy.listener.ui.recordsList.RecordsListFragmentArgs;
 
 import java.util.List;
 
@@ -50,10 +48,6 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
 
         _toolbar = requireActivity().findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
-
-        if (getArguments() != null) {
-            ListsPreviewFragmentArgs.fromBundle(getArguments()).getUserId();
-        }
 
         _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 

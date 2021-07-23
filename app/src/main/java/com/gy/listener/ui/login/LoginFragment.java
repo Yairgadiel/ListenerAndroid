@@ -18,6 +18,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.gy.listener.R;
+import com.gy.listener.model.RecordsListsRepository;
+import com.gy.listener.model.items.users.User;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,18 +68,26 @@ public class LoginFragment extends Fragment {
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            LoginFragmentDirections.ActionLoginFragmentToListsPreviewsFragment action =
-                    LoginFragmentDirections.actionLoginFragmentToListsPreviewsFragment();
-            action.setUserId(user.getUid());
-            NavHostFragment.findNavController(LoginFragment.this).navigate(action);
+            if (user == null) {
+                Log.d("LISTENER", "auth failed");
+            }
+            else {
+                // Adding the user (if yet to be added)
+                RecordsListsRepository.getInstance().addUser(new User(user.getUid(), user.getDisplayName(), user.getEmail()), isSuccess -> {
+                    if (isSuccess) {
+                        NavHostFragment.findNavController(LoginFragment.this)
+                                .navigate(R.id.action_LoginFragment_to_ListsPreviewsFragment);
+                    }
+                });
+            }
         }
         else {
             if (response == null) {
                 Log.d("LISTENER", "auth canceled by user");
             }
-
-            Log.d("LISTENER", "auth error: " + response.getError().getMessage());
+            else {
+                Log.d("LISTENER", "auth error: " + response.getError().getMessage());
+            }
         }
     }
 }

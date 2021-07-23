@@ -1,4 +1,4 @@
-package com.gy.listener.model.items;
+package com.gy.listener.model.items.records;
 
 public enum ListType {
     TODO,

@@ -26,8 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.gy.listener.R;
 import com.gy.listener.ui.RecordsListsViewModel;
-import com.gy.listener.model.items.CheckedRecord;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.CheckedRecord;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.utilities.Helpers;
 
 public class RecordsListFragment extends Fragment {

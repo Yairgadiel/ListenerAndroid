@@ -1,41 +1,43 @@
-package com.gy.listener.model.firestore;
+package com.gy.listener.model.firebase;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gy.listener.model.events.IValidator;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.model.events.IOnCompleteListener;
 import com.gy.listener.model.events.IOnRecordsListsFetchListener;
+import com.gy.listener.model.items.users.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirestoreModel {
+public class FirebaseModel {
 
     // region Constants
 
     private static final String RECORDS_LIST_COLLECTION = "records_lists";
 
+    private static final String USERS_COLLECTION = "users";
+
     // endregion
 
     // region Members
 
-    private FirebaseFirestore _firestoreDb;
+    private final FirebaseFirestore _firestoreDb;
 
     // endregion
 
     // region Singleton
 
-    private static FirestoreModel _instance = null;
+    private static FirebaseModel _instance = null;
 
-    private FirestoreModel() {
+    private FirebaseModel() {
         _firestoreDb = FirebaseFirestore.getInstance();
     }
 
-    public static FirestoreModel getInstance() {
+    public static FirebaseModel getInstance() {
         if (_instance == null) {
-            _instance = new FirestoreModel();
+            _instance = new FirebaseModel();
         }
 
         return _instance;
@@ -43,7 +45,7 @@ public class FirestoreModel {
 
     // endregion
 
-    // region Public Methods
+    // region Records Lists
 
     /**
      * This method adds/updates a records list
@@ -67,11 +69,13 @@ public class FirestoreModel {
                 .addOnCompleteListener(task -> {
                     List<RecordsList> data = null;
 
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task.getResult() != null) {
                         data = new ArrayList<>(task.getResult().size());
 
                         for (QueryDocumentSnapshot doc : task.getResult()) {
-                            data.add(RecordsList.create(doc.getData()));
+                            if (doc != null) {
+                                data.add(RecordsList.create(doc.getData()));
+                            }
                         }
                     }
 
@@ -86,7 +90,7 @@ public class FirestoreModel {
                 .addOnCompleteListener(task -> {
                     List<RecordsList> data = null;
 
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task.getResult() != null) {
                         data = new ArrayList<>(task.getResult().size());
 
                         for (QueryDocumentSnapshot doc : task.getResult()) {
@@ -95,6 +99,25 @@ public class FirestoreModel {
                     }
 
                     listener.onFetch(data);
+                });
+    }
+
+    // endregion
+
+    // region Users
+
+    /**
+     * This method adds/updates a user
+     * @param user the user to set
+     * @param listener listener notifying of success/failure
+     */
+    public void setUser(User user, IOnCompleteListener listener) {
+        _firestoreDb.collection(USERS_COLLECTION).document(user.getId())
+                .set(user)
+                .addOnSuccessListener(aVoid -> listener.onComplete(true))
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    listener.onComplete(false);
                 });
     }
 

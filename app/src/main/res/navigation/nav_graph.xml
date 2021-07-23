@@ -26,11 +26,6 @@
         android:name="com.gy.listener.ui.listsPreviews.ListsPreviewFragment"
         android:label="@string/lists_previews_fragment_label"
         tools:layout="@layout/fragment_lists_previews">
-        <argument
-            android:name="userId"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
 
         <action
             android:id="@+id/action_listsPreviewsFragment_to_listAdditionFragment"

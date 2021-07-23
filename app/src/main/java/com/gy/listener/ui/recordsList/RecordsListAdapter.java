@@ -18,10 +18,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.R;
-import com.gy.listener.model.items.CheckedRecord;
-import com.gy.listener.model.items.ListType;
-import com.gy.listener.model.items.Record;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.CheckedRecord;
+import com.gy.listener.model.items.records.ListType;
+import com.gy.listener.model.items.records.Record;
+import com.gy.listener.model.items.records.RecordsList;
 
 import java.util.List;
 
