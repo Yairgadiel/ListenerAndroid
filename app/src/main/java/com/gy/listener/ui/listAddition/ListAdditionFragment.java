@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -24,6 +25,7 @@ import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.ListType;
 import com.gy.listener.model.items.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.ui.recordsList.RecordsListFragment;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 public class ListAdditionFragment extends Fragment {
 
     private RecordsListsViewModel _viewModel;
+    private NavController _navController;
 
     // region UI Members
 
@@ -77,12 +80,12 @@ public class ListAdditionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        _navController = NavHostFragment.findNavController(ListAdditionFragment.this);
+
         initViews(view);
         setListTypeAdapter();
 
-        view.findViewById(R.id.cancel_btn).setOnClickListener(v ->
-                NavHostFragment.findNavController(ListAdditionFragment.this)
-                        .popBackStack());
+        view.findViewById(R.id.cancel_btn).setOnClickListener(v -> _navController.popBackStack());
 
         view.findViewById(R.id.create_btn).setOnClickListener(v -> validateInput(isValid -> {
             _loader.setVisibility(View.VISIBLE);
@@ -105,8 +108,7 @@ public class ListAdditionFragment extends Fragment {
                                     Toast.makeText(getContext(), R.string.addition_failed, Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    NavHostFragment.findNavController(ListAdditionFragment.this)
-                                            .popBackStack();
+                                    _navController.popBackStack();
                                 }
                             });
                         });
