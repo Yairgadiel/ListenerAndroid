@@ -27,7 +27,7 @@ public class RecordsListsRepository {
 
     private final ExecutorService _executorService = Executors.newSingleThreadExecutor();
     private final LiveData<List<RecordsList>> _lists = DatabaseHelper.db.recordsListDAO().getAll();
-    private final MutableLiveData<User> _loggedUser = new MutableLiveData<>(null);
+    private final MutableLiveData<User> _loggedUser;
 
     // endregion
 
@@ -35,7 +35,9 @@ public class RecordsListsRepository {
 
     private static RecordsListsRepository _instance;
 
-    private RecordsListsRepository() {}
+    private RecordsListsRepository() {
+        _loggedUser = UsersRepository.getInstance().getLoggedUser();
+    }
 
     public static RecordsListsRepository getInstance() {
         if (_instance == null) {
@@ -154,17 +156,6 @@ public class RecordsListsRepository {
         }
 
         return recordsList;
-    }
-
-    // endregion
-
-    // region Users
-
-    public void addUser(User user, IOnCompleteListener listener) {
-        Log.d("LISTENER", "repo add user");
-
-        _loggedUser.setValue(user);
-        _executorService.execute(() -> FirebaseModel.getInstance().setUser(user, listener));
     }
 
     // endregion

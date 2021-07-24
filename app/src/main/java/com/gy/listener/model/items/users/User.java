@@ -12,6 +12,11 @@ public class User {
 
     // region C'tor
 
+    /**
+     * Empty default C'tor necessary for firebase object building
+     */
+    public User() {}
+
     public User(String id, String name, String email) {
         _id = id;
         _name = name;

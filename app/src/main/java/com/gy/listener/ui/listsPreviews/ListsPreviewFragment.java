@@ -1,7 +1,11 @@
 package com.gy.listener.ui.listsPreviews;
 
 import  android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -11,7 +15,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -20,6 +26,7 @@ import com.gy.listener.R;
 import com.gy.listener.model.events.IOnCompleteListener;
 import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.ui.UsersViewModel;
 
 import java.util.List;
 
@@ -27,9 +34,12 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
 
     // region Members
 
-    private RecordsListsViewModel _viewModel;
+    private RecordsListsViewModel _recordsListsViewModel;
+    private UsersViewModel _usersViewModel;
     private ListPreviewAdapter _adapter;
     private LiveData<List<RecordsList>> _recordsLists;
+    private NavController _navController;
+
 
     // endregion
 
@@ -45,11 +55,10 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
 
-        _toolbar = requireActivity().findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(null);
-
-        _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
+        _recordsListsViewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
+        _usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_lists_previews, container, false);
@@ -58,6 +67,8 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        _navController = NavHostFragment.findNavController(ListsPreviewFragment.this);
 
         view.findViewById(R.id.add_fab).setOnClickListener(
                 Navigation.createNavigateOnClickListener(R.id.action_listsPreviewsFragment_to_listAdditionFragment));
@@ -68,7 +79,7 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         setLoadingState(true);
 
         // Getting tha data
-        _recordsLists = _viewModel.getData(this);
+        _recordsLists = _recordsListsViewModel.getData(this);
         _recordsLists.observe(getViewLifecycleOwner(),
                 (data) -> _adapter.notifyDataSetChanged());
 
@@ -81,7 +92,43 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         _previews.setAdapter(_adapter);
 
         // Set swipe refresh
-        _refreshLayout.setOnRefreshListener(()-> _viewModel.refreshData(this));
+        _refreshLayout.setOnRefreshListener(()-> _recordsListsViewModel.refreshData(this));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Here on onStart since onViewCreated is called pre activity's initialization
+        _toolbar = requireActivity().findViewById(R.id.toolbar);
+
+        if (_toolbar != null) {
+            _toolbar.setNavigationIcon(null);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_previews, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        if (item.getItemId() == R.id.action_logout) {
+            logout();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     // region Private Methods
@@ -93,6 +140,14 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
 
     private void setLoadingState(boolean isLoading) {
         _refreshLayout.setRefreshing(isLoading);
+    }
+
+    private void logout() {
+        // TODO clean DB?
+        _usersViewModel.signOut();
+        Toast.makeText(getContext(), R.string.signed_out, Toast.LENGTH_SHORT).show();
+        Log.d("LISTENER", "signed out");
+        _navController.navigateUp();
     }
 
     // endregion

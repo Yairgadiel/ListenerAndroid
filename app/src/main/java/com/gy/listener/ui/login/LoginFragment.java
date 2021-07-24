@@ -1,93 +1,160 @@
 package com.gy.listener.ui.login;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
-import com.gy.listener.model.RecordsListsRepository;
-import com.gy.listener.model.items.users.User;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
+import com.gy.listener.model.events.IValidator;
+import com.gy.listener.ui.UsersViewModel;
+import com.gy.listener.utilities.InputUtils;
 
 public class LoginFragment extends Fragment {
 
-    private final ActivityResultLauncher<Intent> _signInLauncher = registerForActivityResult(
-            new FirebaseAuthUIActivityResultContract(),
-            this::onSignInResult
-    );
+    // region UI Members
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private TextInputEditText _email;
+    private TextInputLayout _emailLayout;
+
+    private TextInputEditText _name;
+    private TextInputLayout _nameLayout;
+
+    private TextInputEditText _password;
+    private TextInputLayout _passwordLayout;
+
+    private Button _signUp;
+    private CircularProgressIndicator _loader;
+
+    private Button _signInEmail;
+
+    // endregion
+
+    // region Members
+
+    private UsersViewModel _viewModel;
+    private NavController _navController;
+
+    // endregion
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setupAuthentication();
+        if (getActivity() != null) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        }
+
+        _viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        _navController = NavHostFragment.findNavController(LoginFragment.this);
+
+        if (_viewModel.getLoggedUser().getValue() != null) {
+            _navController.navigate(R.id.action_LoginFragment_to_ListsPreviewsFragment);
+        }
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-    private void setupAuthentication() {
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        // Create and launch sign-in intent
-        Intent signInIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .setLogo(R.mipmap.ic_launcher)
-                .build();
-        _signInLauncher.launch(signInIntent);
+        initViews(view);
+
+        _signUp.setOnClickListener(v -> {
+            _loader.setVisibility(View.VISIBLE);
+
+            validateInput(isValid -> {
+                if (isValid) {
+                    _viewModel.signUp(_name.getText().toString(),
+                            _email.getText().toString(),
+                            _password.getText().toString(),
+                            isSuccess -> {
+                                if (isSuccess) {
+                                    _navController.navigate(R.id.action_LoginFragment_to_ListsPreviewsFragment);
+                                }
+                                else {
+                                    requireActivity().runOnUiThread(() ->
+                                            Toast.makeText(getContext(), R.string.unknown_error, Toast.LENGTH_SHORT).show());
+                                }
+
+                                _loader.setVisibility(View.INVISIBLE);
+                            });
+                }
+                else {
+                    _loader.setVisibility(View.INVISIBLE);
+                }
+            });
+
+        });
+
+        _signInEmail.setOnClickListener(
+                Navigation.createNavigateOnClickListener(R.id.action_LoginFragment_to_signInFragment));
     }
 
-    private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
-        IdpResponse response = result.getIdpResponse();
+    private void initViews(@NonNull View rootView) {
+        _loader = rootView.findViewById(R.id.loader);
+        _email = rootView.findViewById(R.id.user_email);
+        _emailLayout = rootView.findViewById(R.id.user_email_layout);
 
-        if (result.getResultCode() == RESULT_OK) {
-            // Successfully signed in
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Log.d("LISTENER", "auth failed");
-            }
-            else {
-                // Adding the user (if yet to be added)
-                RecordsListsRepository.getInstance().addUser(new User(user.getUid(), user.getDisplayName(), user.getEmail()), isSuccess -> {
-                    if (isSuccess) {
-                        NavHostFragment.findNavController(LoginFragment.this)
-                                .navigate(R.id.action_LoginFragment_to_ListsPreviewsFragment);
-                    }
-                });
-            }
+        _name = rootView.findViewById(R.id.user_name);
+        _nameLayout = rootView.findViewById(R.id.user_name_layout);
+
+        _password = rootView.findViewById(R.id.user_pass);
+        _passwordLayout = rootView.findViewById(R.id.user_pass_layout);
+
+        _signUp = rootView.findViewById(R.id.sign_up);
+        _signInEmail = rootView.findViewById(R.id.sign_in_email);
+
+        InputUtils.addTextValidator(_email, _emailLayout);
+        InputUtils.addTextValidator(_name, _nameLayout);
+        InputUtils.addTextValidator(_password, _passwordLayout);
+    }
+
+    /**
+     * This method validates the input and actively sets errors in cases of values yet to be set
+     * @param validator validator listener for the input validation
+     */
+    private void validateInput(IValidator validator) {
+        if ((_name.getText() == null || _name.getText().toString().isEmpty())) {
+            _nameLayout.setError(getString(R.string.empty_string_error));
+        }
+
+        if ((_email.getText() == null || _email.getText().toString().isEmpty())) {
+            _emailLayout.setError(getString(R.string.empty_string_error));
+            validator.isValid(isNotError());
         }
         else {
-            if (response == null) {
-                Log.d("LISTENER", "auth canceled by user");
-            }
-            else {
-                Log.d("LISTENER", "auth error: " + response.getError().getMessage());
-            }
+            _viewModel.isEmailAvailable(_email.getText().toString(), isValid -> {
+                if (!isValid) {
+                    _emailLayout.setError(getString(R.string.email_taken_error));
+                }
+
+                validator.isValid(isValid && isNotError());
+            });
         }
+    }
+
+    /**
+     * Method checks if any of the input views are NOT in error state
+     */
+    private boolean isNotError() {
+        return _emailLayout.getError() == null &&
+                _nameLayout.getError() == null &&
+                _passwordLayout.getError() == null;
     }
 }

@@ -44,7 +44,4 @@ public class RecordsListsViewModel extends ViewModel {
         RecordsListsRepository.getInstance().isIdAvailable(id, validator);
     }
 
-//    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
-//        RecordsListsRepository.getInstance().updateRecordsList(recordsList, listener);
-//    }
 }

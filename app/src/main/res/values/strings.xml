@@ -8,6 +8,7 @@
     <!-- Strings used for fragments for navigation -->
 
     <string name="login_fragment_label">Login</string>
+    <string name="sign_in_fragment_label">Sign In</string>
     <string name="lists_previews_fragment_label">@string/app_name</string>
     <string name="list_add_fragment_label">Add List</string>
     <string name="records_list_fragment_label">List Fragment</string>
@@ -25,11 +26,13 @@
     <string name="list_type_hint">List Type</string>
 
     <string name="id_taken_error">Id is already taken!</string>
+    <string name="email_taken_error">Email address is already used!</string>
     <string name="empty_string_error">Input can\'t be empty!</string>
     <string name="none_selected_error">Must choose an option!</string>
     <string name="invalid_toast">Input is invalid!</string>
     <string name="revert">revert</string>
 
+    <string name="unknown_error">Unknown error</string>
 
     <string name="signed_out">Signed Out</string>
     <string name="save_changes_prompt">Would you like to save your changes?</string>
@@ -38,7 +41,13 @@
     <string name="save_failed">Unable to save :(</string>
     <string name="successfully_saved">Changes were saved successfully!</string>
     <string name="successfully_reverted">Changes were reverted</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="user_email_hint">Email Address</string>
+    <string name="user_name_hint">Username</string>
+    <string name="user_pass_hint">Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="already_registered_prompt">Already a user?</string>
+    <string name="email_sign_in">Sign in with an email</string>
 
 </resources>
