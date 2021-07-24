@@ -1,8 +1,8 @@
 package com.gy.listener;
 
 import com.gy.listener.model.db.DataConverter;
-import com.gy.listener.model.items.CheckedRecord;
-import com.gy.listener.model.items.Record;
+import com.gy.listener.model.items.records.CheckedRecord;
+import com.gy.listener.model.items.records.Record;
 import com.gy.listener.utilities.Helpers;
 
 import org.junit.Test;

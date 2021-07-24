@@ -2,7 +2,7 @@ package com.gy.listener.model.events;
 
 import androidx.annotation.Nullable;
 
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 
 import java.util.List;
 

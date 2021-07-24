@@ -2,8 +2,8 @@ package com.gy.listener.model.db;
 
 import androidx.room.TypeConverter;
 
-import com.gy.listener.model.items.CheckedRecord;
-import com.gy.listener.model.items.Record;
+import com.gy.listener.model.items.records.CheckedRecord;
+import com.gy.listener.model.items.records.Record;
 
 import java.util.ArrayList;
 import java.util.HashMap;

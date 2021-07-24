@@ -11,8 +11,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.gy.listener.R;
-import com.gy.listener.model.db.DatabaseHelper;
-import com.gy.listener.model.db.IRecordsListDAO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,14 +21,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IRecordsListDAO dao = DatabaseHelper.db.recordsListDAO();
-
-        _navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         setSupportActionBar(toolbar);
-//        toolbar.inflateMenu(R.menu.menu_main);
+
+        _navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         NavigationUI.setupWithNavController(toolbar, _navController);
     }
@@ -52,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 getOnBackPressedDispatcher().onBackPressed();
                 return true;
-//                _navController.navigateUp();
-//
-//                break;
         }
 
         return super.onOptionsItemSelected(item);

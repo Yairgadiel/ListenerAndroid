@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,8 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.gy.listener.R;
 import com.gy.listener.ui.RecordsListsViewModel;
-import com.gy.listener.model.items.CheckedRecord;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.CheckedRecord;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.utilities.Helpers;
 
 public class RecordsListFragment extends Fragment {
@@ -54,6 +55,8 @@ public class RecordsListFragment extends Fragment {
 
     private RecordsListAdapter _adapter;
 
+    private NavController _navController;
+
     // endregion
 
     @Override
@@ -78,6 +81,7 @@ public class RecordsListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        _navController = NavHostFragment.findNavController(RecordsListFragment.this);
         initViews(view);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -98,7 +102,7 @@ public class RecordsListFragment extends Fragment {
 
             if (_currRecordsList == null) {
                 System.out.println("Illegal records list ID was passed!");
-                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+                _navController.popBackStack();
             }
             else {
                 _toolbar.setTitle(_currRecordsList.getName());
@@ -175,18 +179,20 @@ public class RecordsListFragment extends Fragment {
             builder.setMessage(R.string.save_changes_prompt);
             builder.setPositiveButton(R.string.save, (dialog, which) -> {
                 saveRecords();
-                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+                _navController.popBackStack();
             });
 
             builder.setNegativeButton(R.string.discard, (dialog, which) -> {
                 discardChanges();
-                NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+                _navController.popBackStack();
             });
 
             builder.create().show();
         }
         else {
-            NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
+//            if (isAdded()) {
+                    _navController.popBackStack();
+//            }
         }
     }
 

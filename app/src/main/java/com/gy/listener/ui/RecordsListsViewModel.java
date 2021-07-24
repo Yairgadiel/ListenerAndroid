@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.gy.listener.model.RecordsListsRepository;
 import com.gy.listener.model.events.IValidator;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.model.events.IOnCompleteListener;
 
 import java.util.List;
@@ -44,7 +44,4 @@ public class RecordsListsViewModel extends ViewModel {
         RecordsListsRepository.getInstance().isIdAvailable(id, validator);
     }
 
-//    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
-//        RecordsListsRepository.getInstance().updateRecordsList(recordsList, listener);
-//    }
 }

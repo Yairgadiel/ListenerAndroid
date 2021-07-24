@@ -4,14 +4,15 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.gy.listener.model.db.DatabaseHelper;
 import com.gy.listener.model.events.IOnCompleteListener;
-import com.gy.listener.model.events.IOnRecordsListsFetchListener;
 import com.gy.listener.model.events.IValidator;
-import com.gy.listener.model.firestore.FirestoreModel;
-import com.gy.listener.model.items.Record;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.firebase.FirebaseModel;
+import com.gy.listener.model.items.records.Record;
+import com.gy.listener.model.items.records.RecordsList;
+import com.gy.listener.model.items.users.User;
 import com.gy.listener.utilities.Helpers;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class RecordsListsRepository {
 
     private final ExecutorService _executorService = Executors.newSingleThreadExecutor();
     private final LiveData<List<RecordsList>> _lists = DatabaseHelper.db.recordsListDAO().getAll();
+    private final MutableLiveData<User> _loggedUser;
 
     // endregion
 
@@ -33,7 +35,9 @@ public class RecordsListsRepository {
 
     private static RecordsListsRepository _instance;
 
-    private RecordsListsRepository() {}
+    private RecordsListsRepository() {
+        _loggedUser = UsersRepository.getInstance().getLoggedUser();
+    }
 
     public static RecordsListsRepository getInstance() {
         if (_instance == null) {
@@ -50,7 +54,9 @@ public class RecordsListsRepository {
     public void addRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
         Log.d("LISTENER", "repo add list");
 
-        _executorService.execute(() -> FirestoreModel.getInstance().setRecordsList(recordsList, isSuccess -> {
+        recordsList.getUserIds().add(_loggedUser.getValue().getId());
+
+        _executorService.execute(() -> FirebaseModel.getInstance().setRecordsList(recordsList, isSuccess -> {
             // Not passing the received listener since we want to fire it only after
             // fully completing the task (we need to pull the records as well)
             Log.d("LISTENER", "repo add list is success " + isSuccess);
@@ -66,17 +72,13 @@ public class RecordsListsRepository {
         }));
     }
 
-    public void updateRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
-        addRecordsList(recordsList, listener);
-    }
-
     public LiveData<List<RecordsList>> getAllLists(IOnCompleteListener listener) {
         Long localLastUpdate = Helpers.getLocalLastUpdated();
 
         Log.d("LISTENER", "repo getAllLists");
 
             // Get all updates from firesrore
-            FirestoreModel.getInstance().getAllRecordsList(localLastUpdate, data -> _executorService.execute(() -> {
+            FirebaseModel.getInstance().getAllRecordsList(localLastUpdate, data -> _executorService.execute(() -> {
 
                 if (data != null) {
                     Log.d("LISTENER", "repo getAllLists data no null");
@@ -84,15 +86,21 @@ public class RecordsListsRepository {
                     Long lastUpdate = 0L;
 
                     for (RecordsList recordsList : data) {
-                        // Update DB with the new list
-                        DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
+                        // Checking if the current user has deleted = left the list
+                        if (_loggedUser.getValue() == null || !recordsList.getUserIds().contains(_loggedUser.getValue().getId())) {
+                            DatabaseHelper.db.recordsListDAO().delete(recordsList);
+                        }
+                        else {
+                            // Update DB with the new list
+                            DatabaseHelper.db.recordsListDAO().insertAll(recordsList);
 
-                        // Updating the local collection since ROOM f*cking refuses to do so
-                        for (RecordsList list : _lists.getValue()) {
-                            if (list.getId().equals(recordsList.getId())) {
-                                list.setRecords(recordsList.getRecords());
+                            // Updating the records list in the local collection since ROOM f*cking refuses to do so
+                            for (RecordsList list : _lists.getValue()) {
+                                if (list.getId().equals(recordsList.getId())) {
+                                    list.setRecords(recordsList.getRecords());
 
-                                break;
+                                    break;
+                                }
                             }
                         }
 
@@ -115,7 +123,7 @@ public class RecordsListsRepository {
     }
 
     public void isIdAvailable(String id, IValidator validator) {
-        FirestoreModel.getInstance().getAllRecordsWithField(RecordsList.ID, id, data -> validator.isValid(data.isEmpty()));
+        FirebaseModel.getInstance().getAllRecordsWithField(RecordsList.ID, id, data -> validator.isValid(data == null || data.isEmpty()));
     }
 
     /**

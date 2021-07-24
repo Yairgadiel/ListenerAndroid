@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gy.listener.NavGraphDirections;
 import com.gy.listener.R;
-import com.gy.listener.model.items.RecordsList;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.ui.recordsList.RecordsListFragmentDirections;
 
 import java.util.List;

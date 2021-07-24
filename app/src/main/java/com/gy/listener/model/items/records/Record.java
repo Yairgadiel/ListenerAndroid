@@ -1,6 +1,8 @@
-package com.gy.listener.model.items;
+package com.gy.listener.model.items.records;
 
 import androidx.annotation.Nullable;
+
+import com.gy.listener.model.items.IJsonConverter;
 
 import java.io.Serializable;
 import java.util.HashMap;
