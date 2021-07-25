@@ -25,8 +25,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.gy.listener.R;
 import com.gy.listener.model.events.IOnCompleteListener;
 import com.gy.listener.model.items.records.RecordsList;
-import com.gy.listener.ui.RecordsListsViewModel;
-import com.gy.listener.ui.UsersViewModel;
+import com.gy.listener.viewModel.RecordsListsViewModel;
+import com.gy.listener.viewModel.UsersViewModel;
 
 import java.util.List;
 

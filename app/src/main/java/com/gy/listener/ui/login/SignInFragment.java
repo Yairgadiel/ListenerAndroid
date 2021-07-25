@@ -17,7 +17,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
-import com.gy.listener.ui.UsersViewModel;
+import com.gy.listener.viewModel.UsersViewModel;
 import com.gy.listener.utilities.InputUtils;
 
 public class SignInFragment extends Fragment {

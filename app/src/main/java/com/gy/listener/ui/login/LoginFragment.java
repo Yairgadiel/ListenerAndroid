@@ -21,7 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.gy.listener.R;
 import com.gy.listener.model.events.IValidator;
-import com.gy.listener.ui.UsersViewModel;
+import com.gy.listener.viewModel.UsersViewModel;
 import com.gy.listener.utilities.InputUtils;
 
 public class LoginFragment extends Fragment {
@@ -122,7 +122,7 @@ public class LoginFragment extends Fragment {
 
         InputUtils.addTextValidator(_email, _emailLayout);
         InputUtils.addTextValidator(_name, _nameLayout);
-        InputUtils.addTextValidator(_password, _passwordLayout);
+        InputUtils.addTextValidator(_password, _passwordLayout, 6);
     }
 
     /**
@@ -131,11 +131,11 @@ public class LoginFragment extends Fragment {
      */
     private void validateInput(IValidator validator) {
         if ((_name.getText() == null || _name.getText().toString().isEmpty())) {
-            _nameLayout.setError(getString(R.string.empty_string_error));
+            _nameLayout.setError(getString(R.string.empty_input_error));
         }
 
         if ((_email.getText() == null || _email.getText().toString().isEmpty())) {
-            _emailLayout.setError(getString(R.string.empty_string_error));
+            _emailLayout.setError(getString(R.string.empty_input_error));
             validator.isValid(isNotError());
         }
         else {

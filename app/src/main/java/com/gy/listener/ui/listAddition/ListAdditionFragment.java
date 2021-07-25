@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ import com.gy.listener.R;
 import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.records.ListType;
 import com.gy.listener.model.items.records.RecordsList;
-import com.gy.listener.ui.RecordsListsViewModel;
+import com.gy.listener.viewModel.RecordsListsViewModel;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
 
@@ -62,6 +63,10 @@ public class ListAdditionFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        if (getActivity() != null) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
 
         _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
 
@@ -122,18 +127,12 @@ public class ListAdditionFragment extends Fragment {
     private void initViews(@NonNull View rootView) {
         _id = rootView.findViewById(R.id.list_id);
         _idLayout = rootView.findViewById(R.id.list_id_layout);
-        _idLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
-        _idLayout.setEndIconActivated(true);
 
         _name = rootView.findViewById(R.id.list_name);
         _nameLayout = rootView.findViewById(R.id.list_name_layout);
-        _nameLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
-        _nameLayout.setEndIconActivated(true);
 
         _details = rootView.findViewById(R.id.list_details);
         _detailsLayout = rootView.findViewById(R.id.list_details_layout);
-        _detailsLayout.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
-        _detailsLayout.setEndIconActivated(true);
 
         _listType = rootView.findViewById(R.id.list_type);
         _listTypeLayout = rootView.findViewById(R.id.list_type_layout);
@@ -175,7 +174,7 @@ public class ListAdditionFragment extends Fragment {
      */
     private void validateInput(IValidator idValidator) {
         if ((_name.getText() == null || _name.getText().toString().isEmpty())) {
-            _nameLayout.setError(getString(R.string.empty_string_error));
+            _nameLayout.setError(getString(R.string.empty_input_error));
         }
 
         if (_selectedType == null) {
@@ -183,7 +182,7 @@ public class ListAdditionFragment extends Fragment {
         }
 
         if ((_id.getText() == null || _id.getText().toString().isEmpty())) {
-            _idLayout.setError(getString(R.string.empty_string_error));
+            _idLayout.setError(getString(R.string.empty_input_error));
             idValidator.isValid(isNotError());
         }
         else {

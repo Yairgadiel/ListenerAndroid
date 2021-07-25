@@ -27,7 +27,8 @@
 
     <string name="id_taken_error">Id is already taken!</string>
     <string name="email_taken_error">Email address is already used!</string>
-    <string name="empty_string_error">Input can\'t be empty!</string>
+    <string name="empty_input_error">Input can\'t be empty!</string>
+    <string name="short_input_error">Input must be at least %d characters</string>
     <string name="none_selected_error">Must choose an option!</string>
     <string name="invalid_toast">Input is invalid!</string>
     <string name="revert">revert</string>

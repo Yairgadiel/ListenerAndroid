@@ -1,4 +1,4 @@
-package com.gy.listener.ui;
+package com.gy.listener.viewModel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;

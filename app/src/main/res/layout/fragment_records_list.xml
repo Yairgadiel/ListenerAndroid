@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="sadsaf"
+        android:text="id"
         android:textColor="@android:color/darker_gray"
         android:textSize="@dimen/details_text_size"
         app:layout_constraintEnd_toEndOf="parent"
