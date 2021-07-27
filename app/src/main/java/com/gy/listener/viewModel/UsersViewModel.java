@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.gy.listener.model.UsersRepository;
 import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnUsersFetchListener;
 import com.gy.listener.model.events.IValidator;
+import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.model.items.users.User;
 
 public class UsersViewModel extends ViewModel {
@@ -17,6 +19,10 @@ public class UsersViewModel extends ViewModel {
 
     public MutableLiveData<User> getLoggedUser() {
         return _loggedUser;
+    }
+
+    public void getAllUsers(IOnUsersFetchListener listener) {
+        UsersRepository.getInstance().getAllUsers(listener);
     }
 
     public void signUp(String name, String email, String password, IOnCompleteListener listener) {

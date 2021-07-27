@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.gy.listener.model.db.DatabaseHelper;
 import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnUsersFetchListener;
 import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.firebase.FirebaseModel;
 import com.gy.listener.model.items.records.Record;
@@ -48,15 +49,14 @@ public class UsersRepository {
 
     // endregion
 
-    // region Public Methods
-
-
-    // endregion
-
     // region Users
 
     public MutableLiveData<User> getLoggedUser() {
         return _loggedUser;
+    }
+
+    public void getAllUsers(IOnUsersFetchListener listener) {
+        FirebaseModel.getInstance().getAllUsers(listener);
     }
 
     // endregion

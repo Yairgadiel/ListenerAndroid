@@ -4,14 +4,24 @@
     tools:context="com.gy.listener.ui.MainActivity">
     <item
         android:id="@+id/action_revert"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:icon="@android:drawable/ic_menu_revert"
         android:title="@string/action_revert"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_save"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         android:icon="@android:drawable/ic_menu_save"
         android:title="@string/action_save"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_invite_user"
+        android:orderInCategory="3"
+        android:title="@string/invite_user_list"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_leave"
+        android:orderInCategory="4"
+        android:title="@string/leave_list"
+        app:showAsAction="never" />
 </menu>

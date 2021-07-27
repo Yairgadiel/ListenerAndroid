@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,6 +73,9 @@ public class SignInFragment extends Fragment {
                     if (isSuccess) {
                         _navController.navigateUp();
                     }
+                    else {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.sign_in_failed, Toast.LENGTH_SHORT).show());
+                    }
 
                     _loader.setVisibility(View.INVISIBLE);
                 });
@@ -95,10 +99,6 @@ public class SignInFragment extends Fragment {
 
         InputUtils.addTextValidator(_email, _emailLayout);
         InputUtils.addTextValidator(_password, _passwordLayout);
-    }
-
-    private void validateInput() {
-
     }
 
     /**

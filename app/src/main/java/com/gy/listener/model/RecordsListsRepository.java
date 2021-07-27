@@ -78,8 +78,6 @@ public class RecordsListsRepository {
     public void addRecordsList(RecordsList recordsList, IOnCompleteListener listener) {
         Log.d("LISTENER", "repo add list");
 
-        recordsList.getUserIds().add(_loggedUser.getValue().getId());
-
         _executorService.execute(() -> FirebaseModel.getInstance().setRecordsList(recordsList, isSuccess -> {
             // Not passing the received listener since we want to fire it only after
             // fully completing the task (we need to pull the records as well)
@@ -121,6 +119,7 @@ public class RecordsListsRepository {
                         for (RecordsList list : _lists.getValue()) {
                             if (list.getId().equals(recordsList.getId())) {
                                 list.setRecords(recordsList.getRecords());
+                                list.setUserIds(recordsList.getUserIds());
 
                                 break;
                             }
@@ -172,7 +171,8 @@ public class RecordsListsRepository {
                         currList.getListType(),
                         copyRecords,
                         currList.getDateCreated(),
-                        currList.getLastUpdated());
+                        currList.getLastUpdated(),
+                        currList.getUserIds());
 
                 break;
             }

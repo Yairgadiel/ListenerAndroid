@@ -1,8 +1,8 @@
 package com.gy.listener.ui.recordsList;
 
-import android.graphics.Bitmap;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,20 +36,22 @@ import com.gy.listener.model.events.IOnImageLoadedListener;
 import com.gy.listener.model.events.IOnImageUploadedListener;
 import com.gy.listener.model.items.records.CheckedRecord;
 import com.gy.listener.model.items.records.RecordsList;
+import com.gy.listener.model.items.users.User;
 import com.gy.listener.utilities.Helpers;
 import com.gy.listener.viewModel.RecordsListsViewModel;
-import com.squareup.picasso.Picasso;
+import com.gy.listener.viewModel.UsersViewModel;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecordsListFragment extends Fragment implements IImageHelper {
 
     // region UI Members
 
-    private Toolbar _toolbar;
     private TextView _id;
     private TextView _dateCreated;
     private TextView _details;
+    private TextView _users;
     private RecyclerView _records;
     private ImageButton _addRecordBtn;
     private CircularProgressIndicator _loader;
@@ -57,7 +60,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
 
     // region Members
 
-    private RecordsListsViewModel _viewModel;
+    private RecordsListsViewModel _recordsListViewModel;
     private RecordsList _currRecordsList;
     private MutableLiveData<Boolean> _isAdding;
     private MutableLiveData<Boolean> _isChanged;
@@ -68,6 +71,8 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
 
     private NavController _navController;
 
+    private UsersViewModel _usersViewModel;
+
     // region Record Attachment Members
 
     private String _attachmentName;
@@ -77,7 +82,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
                 if (pickedUri != null) {
                     _loader.setVisibility(View.VISIBLE);
 
-                    _viewModel.saveAttachment(_attachmentName, pickedUri, uploadedUri -> {
+                    _recordsListViewModel.saveAttachment(_attachmentName, pickedUri, uploadedUri -> {
                         _loader.setVisibility(View.INVISIBLE);
                         _imageUploadedListener.onUploaded(uploadedUri);
                     });
@@ -94,11 +99,9 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
+        _recordsListViewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
+        _usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         _navigateBackListener = new NavigateBackListener();
-
-        _toolbar = requireActivity().findViewById(R.id.toolbar);
-        _toolbar.setNavigationOnClickListener(_navigateBackListener);
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), _navigateBackListener);
 
@@ -127,34 +130,50 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
             NavHostFragment.findNavController(RecordsListFragment.this).popBackStack();
         }
         else {
-            _currRecordsList = _viewModel.getRecordsListById(recordsListId);
+            _currRecordsList = _recordsListViewModel.getRecordsListById(recordsListId);
 
             if (_currRecordsList == null) {
                 Log.d("LISTENER", "Illegal records list ID was passed!");
                 _navController.popBackStack();
             }
             else {
-                _toolbar.setTitle(_currRecordsList.getName());
-                _id.setText(_currRecordsList.getId());
-                _dateCreated.setText(Helpers.getDateString(_currRecordsList.getDateCreated()));
+                loadUsers(isSuccess -> {
+                    if (isSuccess) {
+                         _id.setText(_currRecordsList.getId());
+                        _dateCreated.setText(Helpers.getDateString(_currRecordsList.getDateCreated()));
 
-                _isAdding = new MutableLiveData<>(false);
-                _isChanged = new MutableLiveData<>(false);
+                        _isAdding = new MutableLiveData<>(false);
+                        _isChanged = new MutableLiveData<>(false);
 
-                // Setting the adapter
-                _adapter = new RecordsListAdapter(_currRecordsList, _isAdding, _isChanged, this);
-                _records.setAdapter(_adapter);
+                        // Setting the adapter
+                        _adapter = new RecordsListAdapter(_currRecordsList, _isAdding, _isChanged, this);
+                        _records.setAdapter(_adapter);
 
-                _details.setText(_currRecordsList.getDetails() == null ? "" : (_currRecordsList.getDetails()));
-                _addRecordBtn.setOnClickListener(v -> {
-                    // Only adding a record if the previous one isn't empty
-                    if (_currRecordsList.getRecords().isEmpty() || !_currRecordsList.getRecords().get(_adapter.getItemCount() - 1).getText().isEmpty()) {
-                        _currRecordsList.getRecords().add(new CheckedRecord("", false));
-                        _isAdding.postValue(true);
-                        _isChanged.setValue(true);
+                        _details.setText(_currRecordsList.getDetails() == null ? "" : (_currRecordsList.getDetails()));
+                        _addRecordBtn.setOnClickListener(v -> {
+                            // Only adding a record if the previous one isn't empty
+                            if (_currRecordsList.getRecords().isEmpty() || !_currRecordsList.getRecords().get(_adapter.getItemCount() - 1).getText().isEmpty()) {
+                                _currRecordsList.getRecords().add(new CheckedRecord("", false));
+                                _isAdding.postValue(true);
+                                _isChanged.setValue(true);
+                            }
+                        });
                     }
                 });
             }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Here on onStart since onViewCreated is called pre activity's initialization
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(_currRecordsList.getName());
+            toolbar.setNavigationOnClickListener(_navigateBackListener);
         }
     }
 
@@ -169,7 +188,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();
-        inflater.inflate(R.menu.menu_save, menu);
+        inflater.inflate(R.menu.menu_records_list, menu);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -186,6 +205,16 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
 
             return true;
         }
+        else if (item.getItemId() == R.id.action_invite_user) {
+            displayUserInviteDialog();
+
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_leave) {
+            leaveRecordsList();
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -196,6 +225,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
         _id = rootView.findViewById(R.id.list_id);
         _dateCreated = rootView.findViewById(R.id.list_created);
         _details = rootView.findViewById(R.id.list_details);
+        _users = rootView.findViewById(R.id.list_users);
         _records = rootView.findViewById(R.id.records);
         _addRecordBtn = rootView.findViewById(R.id.add_record_btn);
         _loader = rootView.findViewById(R.id.loader);
@@ -231,7 +261,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
             }
 
             _loader.setVisibility(View.VISIBLE);
-            _viewModel.setRecordsList(_currRecordsList, isSuccess -> {
+            _recordsListViewModel.setRecordsList(_currRecordsList, isSuccess -> {
                 if (getActivity() != null && isAdded()) {
                     getActivity().runOnUiThread(() -> {
                         _loader.setVisibility(View.GONE);
@@ -257,7 +287,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
 
             // Get the records list once again
             _currRecordsList.getRecords().clear();
-            _currRecordsList.getRecords().addAll(_viewModel.getRecordsListById(_currRecordsList.getId()).getRecords());
+            _currRecordsList.getRecords().addAll(_recordsListViewModel.getRecordsListById(_currRecordsList.getId()).getRecords());
 
             _adapter.notifyDataSetChanged();
 
@@ -266,6 +296,134 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
             requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show());
         }
     }
+
+    // region Manage Users
+
+    private void loadUsers(IOnCompleteListener listener) {
+        _usersViewModel.getAllUsers(users -> requireActivity().runOnUiThread(() -> {
+            _loader.setVisibility(View.INVISIBLE);
+
+            if (users == null || users.isEmpty()) {
+                listener.onComplete(false);
+
+                Log.d("LISTENER", "Error no users init");
+                Toast.makeText(getContext(), R.string.users_unavailable, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                List<User> invited = new ArrayList<>();
+
+                // Get only uninvited users
+                for (User user : users) {
+                    if (_currRecordsList.getUserIds().contains(user.getId())) {
+                        invited.add(user);
+                    }
+                }
+
+                setUsersView(invited);
+
+                listener.onComplete(true);
+            }
+        }));
+    }
+
+    /**
+     * This method sets the list's users view
+     */
+    private void setUsersView(List<User> users) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int userIndex = 0; userIndex < users.size(); userIndex++) {
+            stringBuilder.append(users.get(userIndex).getName());
+
+            if (userIndex < users.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+
+        _users.setText(stringBuilder.toString());
+    }
+
+    private void displayUserInviteDialog() {
+        if (getContext() == null) {
+            Log.d("LISTENER", "Error no context");
+        }
+        else {
+            _loader.setVisibility(View.VISIBLE);
+
+            _usersViewModel.getAllUsers(users -> requireActivity().runOnUiThread(() -> {
+                _loader.setVisibility(View.INVISIBLE);
+
+                if (users == null || users.isEmpty()) {
+                    Log.d("LISTENER", "Error no users");
+                    Toast.makeText(getContext(), R.string.users_unavailable, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    List<User> uninvited = new ArrayList<>();
+                    List<User> invited = new ArrayList<>();
+
+                    // Get only uninvited users
+                    for (User user : users) {
+                        if (_currRecordsList.getUserIds().contains(user.getId())) {
+                            invited.add(user);
+                        }
+                        else {
+                            uninvited.add(user);
+                        }
+                    }
+
+                    setUsersView(invited);
+
+                    if (uninvited.isEmpty()) {
+                        Toast.makeText(getContext(), R.string.all_users_invited, Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Dialog usersDialog = new Dialog(getContext());
+                        usersDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                        usersDialog.setContentView(((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                                .inflate(R.layout.dialog_users, null));
+
+                        RecyclerView usersRv = usersDialog.findViewById(R.id.users);
+                        usersRv.setLayoutManager(new LinearLayoutManager(getContext()));
+                        UsersAdapter adapter = new UsersAdapter(uninvited, id -> {
+                            _currRecordsList.getUserIds().add(id);
+                            _isChanged.setValue(true);
+
+                            loadUsers(isSuccess -> {});
+                        });
+
+                        usersRv.setAdapter(adapter);
+
+                        usersDialog.show();
+                    }
+                }
+            }));
+        }
+    }
+
+    private void leaveRecordsList() {
+        if (getContext() == null) {
+            Log.d("LISTENER", "Error no context on leave");
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+            builder.setMessage(R.string.leave_list_prompt);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                _currRecordsList.getUserIds().remove(_usersViewModel.getLoggedUser().getValue().getId());
+                _isChanged.setValue(true);
+
+                saveRecords();
+
+                _navController.popBackStack();
+            });
+
+            builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
+
+            builder.create().show();
+        }
+    }
+
+    // endregion
 
     // endregion
 
@@ -282,7 +440,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
     public void loadImage(String path, IOnImageLoadedListener listener) {
         _loader.setVisibility(View.VISIBLE);
 
-        _viewModel.loadAttachment(path, loadedImage -> {
+        _recordsListViewModel.loadAttachment(path, loadedImage -> {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     _loader.setVisibility(View.INVISIBLE);
@@ -297,7 +455,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
     public void deleteImage(String name, IOnCompleteListener listener) {
         _loader.setVisibility(View.VISIBLE);
 
-        _viewModel.deleteAttachment(name, isSuccess -> {
+        _recordsListViewModel.deleteAttachment(name, isSuccess -> {
             _loader.setVisibility(View.INVISIBLE);
 
             listener.onComplete(isSuccess);

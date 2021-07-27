@@ -28,6 +28,7 @@ import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.viewModel.RecordsListsViewModel;
 import com.gy.listener.utilities.InputUtils;
 import com.gy.listener.utilities.TextUtils;
+import com.gy.listener.viewModel.UsersViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 public class ListAdditionFragment extends Fragment {
 
     private RecordsListsViewModel _viewModel;
+    private UsersViewModel _usersViewModel;
     private NavController _navController;
 
     // region UI Members
@@ -69,6 +71,7 @@ public class ListAdditionFragment extends Fragment {
         }
 
         _viewModel = new ViewModelProvider(this).get(RecordsListsViewModel.class);
+        _usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_addition, container, false);
@@ -97,10 +100,14 @@ public class ListAdditionFragment extends Fragment {
             if (isValid) {
                 Log.d("LISTENER", "add list");
 
-                _viewModel.setRecordsList(new RecordsList(_id.getText().toString(),
-                                _name.getText().toString(),
-                                _details.getText().toString(),
-                                _selectedType),
+                RecordsList recordsListToAdd = new RecordsList(_id.getText().toString(),
+                        _name.getText().toString(),
+                        _details.getText().toString(),
+                        _selectedType);
+
+                recordsListToAdd.getUserIds().add(_usersViewModel.getLoggedUser().getValue().getId());
+
+                _viewModel.setRecordsList(recordsListToAdd,
                         isSuccess -> {
                             Log.d("LISTENER", "add list is success " + isSuccess);
 

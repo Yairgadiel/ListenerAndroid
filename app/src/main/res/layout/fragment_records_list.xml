@@ -77,4 +77,27 @@
         app:layout_constraintStart_toStartOf="@id/records"
         tools:ignore="UnusedAttribute" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_users_headline"
+        android:textColor="@color/black"
+        android:textSize="@dimen/input_text_size"
+        android:layout_margin="8dp"
+        android:text="@string/users_headline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/list_users"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_users"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Unable to get users!"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
