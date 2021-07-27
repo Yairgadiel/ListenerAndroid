@@ -1,6 +1,9 @@
 package com.gy.listener.ui.recordsList;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -25,12 +30,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.gy.listener.R;
-import com.gy.listener.viewModel.RecordsListsViewModel;
+import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnImageLoadedListener;
+import com.gy.listener.model.events.IOnImageUploadedListener;
 import com.gy.listener.model.items.records.CheckedRecord;
 import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.utilities.Helpers;
+import com.gy.listener.viewModel.RecordsListsViewModel;
+import com.squareup.picasso.Picasso;
 
-public class RecordsListFragment extends Fragment {
+import java.io.IOException;
+
+public class RecordsListFragment extends Fragment implements IImageHelper {
 
     // region UI Members
 
@@ -56,6 +67,24 @@ public class RecordsListFragment extends Fragment {
     private RecordsListAdapter _adapter;
 
     private NavController _navController;
+
+    // region Record Attachment Members
+
+    private String _attachmentName;
+    private IOnImageUploadedListener _imageUploadedListener;
+    private final ActivityResultLauncher<String> _resultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+            pickedUri -> {
+                if (pickedUri != null) {
+                    _loader.setVisibility(View.VISIBLE);
+
+                    _viewModel.saveAttachment(_attachmentName, pickedUri, uploadedUri -> {
+                        _loader.setVisibility(View.INVISIBLE);
+                        _imageUploadedListener.onUploaded(uploadedUri);
+                    });
+                }
+            });
+
+    // endregion
 
     // endregion
 
@@ -101,7 +130,7 @@ public class RecordsListFragment extends Fragment {
             _currRecordsList = _viewModel.getRecordsListById(recordsListId);
 
             if (_currRecordsList == null) {
-                System.out.println("Illegal records list ID was passed!");
+                Log.d("LISTENER", "Illegal records list ID was passed!");
                 _navController.popBackStack();
             }
             else {
@@ -113,7 +142,7 @@ public class RecordsListFragment extends Fragment {
                 _isChanged = new MutableLiveData<>(false);
 
                 // Setting the adapter
-                _adapter = new RecordsListAdapter(_currRecordsList, _isAdding, _isChanged);
+                _adapter = new RecordsListAdapter(_currRecordsList, _isAdding, _isChanged, this);
                 _records.setAdapter(_adapter);
 
                 _details.setText(_currRecordsList.getDetails() == null ? "" : (_currRecordsList.getDetails()));
@@ -190,9 +219,7 @@ public class RecordsListFragment extends Fragment {
             builder.create().show();
         }
         else {
-//            if (isAdded()) {
-                    _navController.popBackStack();
-//            }
+            _navController.popBackStack();
         }
     }
 
@@ -238,6 +265,43 @@ public class RecordsListFragment extends Fragment {
 
             requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show());
         }
+    }
+
+    // endregion
+
+    // region Image Helper
+
+    @Override
+    public void pickImage(IOnImageUploadedListener listener) {
+        _attachmentName = _currRecordsList.getId() + "-" + System.currentTimeMillis();
+        _imageUploadedListener = listener;
+        _resultLauncher.launch("image/*");
+    }
+
+    @Override
+    public void loadImage(String path, IOnImageLoadedListener listener) {
+        _loader.setVisibility(View.VISIBLE);
+
+        _viewModel.loadAttachment(path, loadedImage -> {
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    _loader.setVisibility(View.INVISIBLE);
+
+                    listener.onLoaded(loadedImage);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void deleteImage(String name, IOnCompleteListener listener) {
+        _loader.setVisibility(View.VISIBLE);
+
+        _viewModel.deleteAttachment(name, isSuccess -> {
+            _loader.setVisibility(View.INVISIBLE);
+
+            listener.onComplete(isSuccess);
+        });
     }
 
     // endregion

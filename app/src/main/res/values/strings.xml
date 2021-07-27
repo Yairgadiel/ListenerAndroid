@@ -38,6 +38,9 @@
     <string name="signed_out">Signed Out</string>
     <string name="save_changes_prompt">Would you like to save your changes?</string>
     <string name="addition_failed">Unable to create :(</string>
+    <string name="remove_failed">Unable to remove :(</string>
+    <string name="remove_success">Removed successfully</string>
+    <string name="load_failed">Unable to load :(</string>
     <string name="fetching_failed">Error fetching data :(</string>
     <string name="save_failed">Unable to save :(</string>
     <string name="successfully_saved">Changes were saved successfully!</string>
@@ -50,5 +53,7 @@
     <string name="sign_in">Sign In</string>
     <string name="already_registered_prompt">Already a user?</string>
     <string name="email_sign_in">Sign in with an email</string>
+    <string name="remove">Remove</string>
+    <string name="replace">Replace</string>
 
 </resources>
