@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CheckedRecord extends Record {
     protected static String IS_CHECKED = "IsChecked";
@@ -47,7 +48,7 @@ public class CheckedRecord extends Record {
     public static CheckedRecord create(Map<String, Object> json) {
         return new CheckedRecord(
                 (String) json.get(TEXT),
-                (String) json.get(IMG_PATH),
+                Objects.equals(json.get(IMG_PATH), "null") ? null : ((String) json.get(IMG_PATH)),
                 Boolean.parseBoolean((String) json.get(IS_CHECKED))
         );
     }

@@ -1,12 +1,17 @@
 package com.gy.listener.viewModel;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.gy.listener.model.RecordsListsRepository;
+import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnImageLoadedListener;
+import com.gy.listener.model.events.IOnImageUploadedListener;
 import com.gy.listener.model.events.IValidator;
 import com.gy.listener.model.items.records.RecordsList;
-import com.gy.listener.model.events.IOnCompleteListener;
 
 import java.util.List;
 
@@ -44,4 +49,15 @@ public class RecordsListsViewModel extends ViewModel {
         RecordsListsRepository.getInstance().isIdAvailable(id, validator);
     }
 
+    public void saveAttachment(String name, Uri imgUri, IOnImageUploadedListener listener) {
+        RecordsListsRepository.getInstance().saveRecordAttachment(name, imgUri, listener);
+    }
+
+    public void loadAttachment(String name, IOnImageLoadedListener listener) {
+        RecordsListsRepository.getInstance().loadRecordAttachment(name, listener);
+    }
+
+    public void deleteAttachment(String name, IOnCompleteListener listener) {
+        RecordsListsRepository.getInstance().deleteRecordAttachment(name, listener);
+    }
 }

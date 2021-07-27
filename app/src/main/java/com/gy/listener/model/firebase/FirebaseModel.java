@@ -1,25 +1,30 @@
 package com.gy.listener.model.firebase;
 
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import androidx.annotation.Nullable;
 
-import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gy.listener.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.gy.listener.model.events.IOnCompleteListener;
+import com.gy.listener.model.events.IOnImageLoadedListener;
+import com.gy.listener.model.events.IOnImageUploadedListener;
 import com.gy.listener.model.events.IOnRecordsListsFetchListener;
 import com.gy.listener.model.events.IOnUsersFetchListener;
 import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.model.items.users.User;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FirebaseModel {
@@ -30,12 +35,15 @@ public class FirebaseModel {
 
     private static final String USERS_COLLECTION = "users";
 
+    private static final String IMAGES_STORAGE = "images";
+
     // endregion
 
     // region Members
 
     private final FirebaseFirestore _firestoreDb;
     private final FirebaseAuth _firebaseAuth;
+    private final FirebaseStorage _firebaseStorage;
 
     // endregion
 
@@ -46,6 +54,7 @@ public class FirebaseModel {
     private FirebaseModel() {
         _firestoreDb = FirebaseFirestore.getInstance();
         _firebaseAuth = FirebaseAuth.getInstance();
+        _firebaseStorage = FirebaseStorage.getInstance();
     }
 
     public static FirebaseModel getInstance() {
@@ -216,6 +225,49 @@ public class FirebaseModel {
 
     public void signOut() {
         _firebaseAuth.signOut();
+    }
+
+    // endregion
+
+    // region Storage
+
+    public void uploadImage(String name, Bitmap img, IOnImageUploadedListener listener) {
+        final StorageReference imagesRef = _firebaseStorage.getReference().child(IMAGES_STORAGE).child(name);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imagesRef.putBytes(data);
+        uploadTask.addOnFailureListener(e -> {
+            listener.onUploaded(null);
+            e.printStackTrace();
+        })
+        .addOnSuccessListener(taskSnapshot -> {
+            loadImage(name, listener);
+        });
+    }
+
+    public void loadImage(String name, IOnImageUploadedListener listener) {
+        final StorageReference imagesRef = _firebaseStorage.getReference().child(IMAGES_STORAGE).child(name);
+        imagesRef.getDownloadUrl()
+                .addOnSuccessListener(uri -> listener.onUploaded(uri.toString()))
+                .addOnFailureListener(exc -> {
+                    listener.onUploaded(null);
+                    exc.printStackTrace();
+                });
+    }
+
+    public void deleteImage(String name, IOnCompleteListener listener) {
+        // Create a storage reference from our app
+        StorageReference storageRef = _firebaseStorage.getReference();
+        StorageReference imageRef = storageRef.child(IMAGES_STORAGE).child(name);
+
+        // Delete the file
+        imageRef.delete().addOnSuccessListener(aVoid -> listener.onComplete(true))
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    listener.onComplete(false);
+                });
     }
 
     // endregion
