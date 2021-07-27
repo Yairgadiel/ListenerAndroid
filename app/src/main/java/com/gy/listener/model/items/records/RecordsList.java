@@ -12,6 +12,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 import com.gy.listener.model.db.DataConverter;
 import com.gy.listener.model.db.DbContract;
+import com.gy.listener.model.db.UsersConverter;
 import com.gy.listener.model.items.IJsonConverter;
 
 import java.io.Serializable;
@@ -77,13 +78,15 @@ public class RecordsList implements Serializable, IJsonConverter, Comparable {
     @ColumnInfo(name = "list_update")
     private Long _lastUpdated;
 
-    @Ignore
+    @ColumnInfo(name = "list_users")
+    @TypeConverters(UsersConverter.class)
     private List<String> _userIds;
 
     // endregion
 
     // region C'tor
 
+    @Ignore
     public RecordsList(@NonNull String id, @NonNull String name, @Nullable String details, ListType listType, List<Record> records, long dateCreated, Long lastUpdated) {
         this._id = id;
         this._name = name;
@@ -94,7 +97,6 @@ public class RecordsList implements Serializable, IJsonConverter, Comparable {
         this._lastUpdated = lastUpdated;
     }
 
-    @Ignore
     public RecordsList(@NonNull String id,
                        @NonNull String name,
                        @Nullable String details,

@@ -19,6 +19,8 @@
     <string name="discard">Discard</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="list_id_hint">Unique ID</string>
     <string name="list_name_hint">List Name</string>
@@ -42,9 +44,15 @@
     <string name="remove_success">Removed successfully</string>
     <string name="load_failed">Unable to load :(</string>
     <string name="fetching_failed">Error fetching data :(</string>
+    <string name="sign_in_failed">Wrong details</string>
     <string name="save_failed">Unable to save :(</string>
     <string name="successfully_saved">Changes were saved successfully!</string>
     <string name="successfully_reverted">Changes were reverted</string>
+
+    <string name="users_unavailable">Users unavailable</string>
+    <string name="all_users_invited">All users are already invited</string>
+    <string name="invite_user_prompt">Invite user to list?</string>
+    <string name="leave_list_prompt">Are you sure you want to leave?</string>
 
     <string name="user_email_hint">Email Address</string>
     <string name="user_name_hint">Username</string>
@@ -55,5 +63,8 @@
     <string name="email_sign_in">Sign in with an email</string>
     <string name="remove">Remove</string>
     <string name="replace">Replace</string>
+    <string name="leave_list">Leave</string>
+    <string name="invite_user_list">Invite User</string>
+    <string name="users_headline">Users:</string>
 
 </resources>

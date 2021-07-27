@@ -167,6 +167,24 @@ public class FirebaseModel {
                 });
     }
 
+    public void getAllUsers(IOnUsersFetchListener listener) {
+        _firestoreDb.collection(USERS_COLLECTION)
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<User> data = null;
+
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        data = new ArrayList<>(task.getResult().size());
+
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            data.add(doc.toObject(User.class));
+                        }
+                    }
+
+                    listener.onFetch(data);
+                });
+    }
+
     // endregion
 
     // endregion

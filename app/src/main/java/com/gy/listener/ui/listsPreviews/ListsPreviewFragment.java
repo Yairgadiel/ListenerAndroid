@@ -45,7 +45,6 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
 
     // region UI Members
 
-    private Toolbar _toolbar;
     private RecyclerView _previews;
     private SwipeRefreshLayout _refreshLayout;
 
@@ -100,10 +99,10 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         super.onStart();
 
         // Here on onStart since onViewCreated is called pre activity's initialization
-        _toolbar = requireActivity().findViewById(R.id.toolbar);
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
 
-        if (_toolbar != null) {
-            _toolbar.setNavigationIcon(null);
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(null);
         }
     }
 
