@@ -52,9 +52,9 @@ public class ListAdditionFragment extends Fragment {
     private TextInputEditText _details;
     private TextInputLayout _detailsLayout;
 
-    private AutoCompleteTextView _listType;
-    private TextInputLayout _listTypeLayout;
-    private ListType _selectedType = null;
+//    private AutoCompleteTextView _listType;
+//    private TextInputLayout _listTypeLayout;
+    private ListType _selectedType = /*null*/ ListType.TODO;
 
     private CircularProgressIndicator _loader;
 
@@ -141,8 +141,8 @@ public class ListAdditionFragment extends Fragment {
         _details = rootView.findViewById(R.id.list_details);
         _detailsLayout = rootView.findViewById(R.id.list_details_layout);
 
-        _listType = rootView.findViewById(R.id.list_type);
-        _listTypeLayout = rootView.findViewById(R.id.list_type_layout);
+//        _listType = rootView.findViewById(R.id.list_type);
+//        _listTypeLayout = rootView.findViewById(R.id.list_type_layout);
 
         _loader = rootView.findViewById(R.id.addition_loader);
 
@@ -164,15 +164,15 @@ public class ListAdditionFragment extends Fragment {
             listTypes = Arrays.stream(ListType.values()).map(e -> TextUtils.toPascalCase(e.name())).collect(Collectors.toList());
         }
 
-        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(getContext(),
-                R.layout.dropdown_menu_popup_item,
-                listTypes);
-        _listType.setAdapter(typesAdapter);
-
-        _listType.setOnItemClickListener((parent, view, position, id) -> {
-            _selectedType = ListType.values()[position];
-            _listTypeLayout.setError(null);
-        });
+//        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(getContext(),
+//                R.layout.dropdown_menu_popup_item,
+//                listTypes);
+//        _listType.setAdapter(typesAdapter);
+//
+//        _listType.setOnItemClickListener((parent, view, position, id) -> {
+//            _selectedType = ListType.values()[position];
+//            _listTypeLayout.setError(null);
+//        });
     }
 
     /**
@@ -184,9 +184,9 @@ public class ListAdditionFragment extends Fragment {
             _nameLayout.setError(getString(R.string.empty_input_error));
         }
 
-        if (_selectedType == null) {
-            _listTypeLayout.setError(getString(R.string.none_selected_error));
-        }
+//        if (_selectedType == null) {
+//            _listTypeLayout.setError(getString(R.string.none_selected_error));
+//        }
 
         if ((_id.getText() == null || _id.getText().toString().isEmpty())) {
             _idLayout.setError(getString(R.string.empty_input_error));
@@ -208,7 +208,7 @@ public class ListAdditionFragment extends Fragment {
      */
     private boolean isNotError() {
         return _idLayout.getError() == null &&
-                _nameLayout.getError() == null &&
-                _listTypeLayout.getError() == null;
+                _nameLayout.getError() == null /*&&
+                _listTypeLayout.getError() == null*/;
     }
 }
