@@ -244,7 +244,7 @@ public class RecordsList implements Serializable, IJsonConverter, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        return ((int) (((RecordsList) o)._dateCreated - _dateCreated));
+        return ((int) (((long) ((RecordsList) o)._dateCreated) - (long) _dateCreated));
     }
 
     // endregion

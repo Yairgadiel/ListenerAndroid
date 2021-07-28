@@ -196,12 +196,12 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_save) {
-            saveRecords();
+            saveRecords(false);
 
             return true;
         }
         else if (item.getItemId() == R.id.action_revert) {
-            discardChanges();
+            discardChanges(false);
 
             return true;
         }
@@ -237,13 +237,11 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
 
             builder.setMessage(R.string.save_changes_prompt);
             builder.setPositiveButton(R.string.save, (dialog, which) -> {
-                saveRecords();
-                _navController.popBackStack();
+                saveRecords(true);
             });
 
             builder.setNegativeButton(R.string.discard, (dialog, which) -> {
-                discardChanges();
-                _navController.popBackStack();
+                discardChanges(true);
             });
 
             builder.create().show();
@@ -253,7 +251,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
         }
     }
 
-    private void saveRecords() {
+    private void saveRecords(boolean closeOnFinish) {
         if (_isChanged.getValue()) {
             // Remove last record if empty
             if (!_currRecordsList.getRecords().isEmpty() && _currRecordsList.getRecords().get(_adapter.getItemCount() - 1).getText().isEmpty()) {
@@ -271,6 +269,10 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
                         // No longer in adding mode
                         _isAdding.postValue(false);
                         _isChanged.setValue(false);
+
+                        if (closeOnFinish) {
+                            _navController.popBackStack();
+                        }
                     });
                 }
             });
@@ -280,7 +282,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
     /**
      * Reverting changes made since last save
      */
-    private void discardChanges() {
+    private void discardChanges(boolean closeOnFinish) {
         if (_isChanged.getValue()) {
             // No longer in adding mode
             _isAdding.postValue(false);
@@ -294,6 +296,10 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
             _isChanged.setValue(false);
 
             requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), R.string.successfully_reverted, Toast.LENGTH_SHORT).show());
+
+            if (closeOnFinish) {
+                _navController.popBackStack();
+            }
         }
     }
 
@@ -412,9 +418,7 @@ public class RecordsListFragment extends Fragment implements IImageHelper {
                 _currRecordsList.getUserIds().remove(_usersViewModel.getLoggedUser().getValue().getId());
                 _isChanged.setValue(true);
 
-                saveRecords();
-
-                _navController.popBackStack();
+                saveRecords(true);
             });
 
             builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());

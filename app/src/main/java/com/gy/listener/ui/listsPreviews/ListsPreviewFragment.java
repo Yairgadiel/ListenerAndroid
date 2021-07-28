@@ -28,6 +28,7 @@ import com.gy.listener.model.items.records.RecordsList;
 import com.gy.listener.viewModel.RecordsListsViewModel;
 import com.gy.listener.viewModel.UsersViewModel;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ListsPreviewFragment extends Fragment implements IOnCompleteListener {
@@ -80,7 +81,10 @@ public class ListsPreviewFragment extends Fragment implements IOnCompleteListene
         // Getting tha data
         _recordsLists = _recordsListsViewModel.getData(this);
         _recordsLists.observe(getViewLifecycleOwner(),
-                (data) -> _adapter.notifyDataSetChanged());
+                (data) -> {
+                    Collections.sort(data);
+                    _adapter.notifyDataSetChanged();
+                });
 
         // Set lists previews
 

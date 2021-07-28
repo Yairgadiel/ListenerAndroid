@@ -135,8 +135,6 @@ public class RecordsListsRepository {
                 Helpers.setLocalLastUpdated(lastUpdate);
             }
 
-            Collections.sort(_lists.getValue());
-
             listener.onComplete(data != null);
         }));
 
